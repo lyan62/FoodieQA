@@ -13,3 +13,9 @@ Evaluate LLMs/VLMs with the foodie benchmark
 
 ## Scripts
 - `eval_text_qa.ipynb`  zero-shot and one-shot evaluation of the text QA.
+
+
+## Image survey preprocessing
+Images and corresponding CSV files can be downloaded from [google drive](https://drive.google.com/drive/folders/1haSXSPMfdYBpkg4wspC0qkxZd16llbDD?usp=sharing)
+
+Use `image_data_cleaning.ipynb` to parse it into clean json files.
