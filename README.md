@@ -22,6 +22,8 @@ Use `image_data_cleaning.ipynb` to parse it into clean json files.
 
 ## VQA 
 ### question formulation
+1. Download the images and change the corresponding `img_folder` in `config.yaml`
+
 `cd ui`   
 
 Edit `config.yaml` 
