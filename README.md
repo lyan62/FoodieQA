@@ -22,11 +22,12 @@ Use `image_data_cleaning.ipynb` to parse it into clean json files.
 
 ## VQA 
 ### question formulation
-1. Download all files from [here](https://drive.google.com/drive/folders/1WFHN8oznqwAdeGXMGlxJbdCbi1l-zL0R?usp=sharing) to a local folder. Unzip the .zip files and set the `img_folder` to your local folder path in `config.yaml`.
+`cd ui` 
 
-`cd ui`   
+- Download all files from [here](https://drive.google.com/drive/folders/1WFHN8oznqwAdeGXMGlxJbdCbi1l-zL0R?usp=sharing) to a local folder. Unzip the .zip files and set the `img_folder` to your local folder path in `config.yaml`.
+      
 
-2. Edit `config.yaml` 
+- Edit `config.yaml` 
     - if food_category_file is "processed_food_category_ingredient", select `food_category` from
         ```
         ["seafood", "meat", "vegetable", "tofu", "main-noodle", "main-bao", "main-rice", "main-bread", "main-other", "main-soup", "main-hotpot", "snack", "bbq", "other"]
@@ -42,7 +43,7 @@ Use `image_data_cleaning.ipynb` to parse it into clean json files.
     save_folder: "image-qa"  # folder name to save annotations
     ```
 
-3. Start UI
+- Start UI
     ```
     python3 -m venv foodie
     conda activate foodie
@@ -50,5 +51,5 @@ Use `image_data_cleaning.ipynb` to parse it into clean json files.
 
     python app.py
     ```
-4. Use the UI as the in the ![annotaion-guide](ui/annotation-guide.png)
+- Use the UI as the in the ![annotaion-guide](ui/annotation-guide.png)
 
