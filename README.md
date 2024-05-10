@@ -22,32 +22,33 @@ Use `image_data_cleaning.ipynb` to parse it into clean json files.
 
 ## VQA 
 ### question formulation
-1. Download the images and change the corresponding `img_folder` in `config.yaml`
+1. Download all files from [here](https://drive.google.com/drive/folders/1WFHN8oznqwAdeGXMGlxJbdCbi1l-zL0R?usp=sharing) to a local folder. Unzip the .zip files and set the `img_folder` to your local folder path in `config.yaml`.
 
 `cd ui`   
 
-Edit `config.yaml` 
-- if food_category_file is "processed_food_category_ingredient", select `food_category` from
-```
-["seafood", "meat", "vegetable", "tofu", "main-noodle", "main-bao", "main-rice", "main-bread", "main-other", "main-soup", "main-hotpot", "snack", "bbq", "other"]
-```
+2. Edit `config.yaml` 
+    - if food_category_file is "processed_food_category_ingredient", select `food_category` from
+        ```
+        ["seafood", "meat", "vegetable", "tofu", "main-noodle", "main-bao", "main-rice", "main-bread", "main-other", "main-soup", "main-hotpot", "snack", "bbq", "other"]
+        ```
 
-- if food_category_file is "processed_food_category_region", select `food_category` from 
-```["川", "湘", "赣", "黔", "徽", "闽", "粤", "浙", "苏", "鲁", "新疆","东北","西北", "内蒙", "上海", "其他"]```
+    - if food_category_file is "processed_food_category_region", select `food_category` from 
+        ```["川", "湘", "赣", "黔", "徽", "闽", "粤", "浙", "苏", "鲁", "新疆","东北","西北", "内蒙", "上海", "其他"]```
 
-```
-food_category_file: "processed_food_category_region" 
-img_folder: "/Users/wli/projects/foodie-dataset/data-collection"
-food_category: "其他" 
-save_folder: "image-qa"  # folder name to save annotations
-```
+    ```
+    food_category_file: "processed_food_category_region" 
+    img_folder: "/Users/wli/projects/foodie-dataset/data-collection"
+    food_category: "其他" 
+    save_folder: "image-qa"  # folder name to save annotations
+    ```
 
-Start UI
-```
-python3 -m venv foodie
-conda activate foodie
-pip install flask
+3. Start UI
+    ```
+    python3 -m venv foodie
+    conda activate foodie
+    pip install flask
 
-python app.py
-```
+    python app.py
+    ```
+4. Use the UI as the in the ![annotaion-guide](ui/annotation-guide.png)
 
