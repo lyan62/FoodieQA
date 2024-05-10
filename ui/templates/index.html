@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Image Display and Question</title>
+    <style>
+        .image-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .image-container img {
+            margin: 0 10px;
+            width: 300px;
+            height: 300px;
+            object-fit: contain;
+            background-color: #f0f0f0; /* Add a background color to fill the padding area */
+            padding: 10px; /* Add some padding around the image */
+        }
+    </style>
+</head>
+<body>
+    <h1>Image Display and Question</h1>
+
+    <div class="image-container">
+        {% for image in image_data_list %}
+        <img src="data:image/png;base64,{{ image.data }}" alt="Image">
+        {% endfor %}
+    </div>
+
+    <form id="input-form" method="POST">
+        {% for i in range(3) %}
+            <label for="question{{ i }}">Question {{ i+1 }}:</label>
+            <input type="text" id="question{{ i }}" name="question" {% if image_qa|length > i %}value="{{ image_qa[i].question }}"{% endif %} required>
+            <br>
+            <label for="answer{{ i }}">Answer {{ i+1 }}:</label>
+            <select id="answer{{ i }}" name="answer" required>
+                <option value="">Select an answer</option>
+                <option value="0" {% if image_qa|length > i and image_qa[i].answer == '0' %}selected{% endif %}>A</option>
+                <option value="1" {% if image_qa|length > i and image_qa[i].answer == '1' %}selected{% endif %}>B</option>
+                <option value="2" {% if image_qa|length > i and image_qa[i].answer == '2' %}selected{% endif %}>C</option>
+                <option value="3" {% if image_qa|length > i and image_qa[i].answer == '3' %}selected{% endif %}>D</option>
+            </select>
+            <br>
+            <label for="question_type{{ i }}">Question Type {{ i+1 }}:</label>
+            <select id="question_type{{ i }}" name="question_type" required>
+                <option value="">Select a question type</option>
+                <option value="cooking-skills" {% if image_qa|length > i and image_qa[i]['question_type'] == 'cooking-skills' %}selected{% endif %}>Cooking Skills</option>
+                <option value="amount" {% if image_qa|length > i and image_qa[i]['question_type'] == 'amount' %}selected{% endif %}>Amount</option>
+                <option value="taste" {% if image_qa|length > i and image_qa[i]['question_type'] == 'taste' %}selected{% endif %}>Taste</option>
+                <option value="region" {% if image_qa|length > i and image_qa[i]['question_type'] == 'region' %}selected{% endif %}>Region</option>
+                <option value="history" {% if image_qa|length > i and image_qa[i]['question_type'] == 'history' %}selected{% endif %}>History</option>
+                <option value="eating-habit" {% if image_qa|length > i and image_qa[i]['question_type'] == 'eating-habit' %}selected{% endif %}>Eating Habit</option>
+                <option value="smell" {% if image_qa|length > i and image_qa[i]['question_type'] == 'smell' %}selected{% endif %}>Smell</option>
+                <option value="color" {% if image_qa|length > i and image_qa[i]['question_type'] == 'color' %}selected{% endif %}>Color</option>
+                <option value="ingredients" {% if image_qa|length > i and image_qa[i]['question_type'] == 'ingredients' %}selected{% endif %}>Ingredients</option>
+                <option value="food-type" {% if image_qa|length > i and image_qa[i]['question_type'] == 'food-type' %}selected{% endif %}>Food Type</option>
+                <option value="plating" {% if image_qa|length > i and image_qa[i]['question_type'] == 'plating' %}selected{% endif %}>Plating</option>
+                <option value="allergy" {% if image_qa|length > i and image_qa[i]['question_type'] == 'allergy' %}selected{% endif %}>Allergy</option>
+                <option value="expense" {% if image_qa|length > i and image_qa[i]['question_type'] == 'expense' %}selected{% endif %}>Expense</option>
+                <option value="other" {% if image_qa|length > i and image_qa[i]['question_type'] == 'other' %}selected{% endif %}>Other</option>
+            </select>
+            <br>
+            <br>
+        {% endfor %}
+        <input type="hidden" name="direction" value="">
+        <input type="hidden" name="start_index" value="{{ start_index }}">
+    </form>
+
+    <p>Current Index: {{ start_index }}</p>
+    
+    <script>
+        const prevButton = document.createElement('button');
+        prevButton.textContent = 'Previous';
+        prevButton.addEventListener('click', () => {
+            document.querySelector('input[name="direction"]').value = 'prev';
+            document.getElementById('input-form').submit();
+        });
+
+        const nextButton = document.createElement('button');
+        nextButton.textContent = 'Next';
+        nextButton.addEventListener('click', () => {
+            document.querySelector('input[name="direction"]').value = 'next';
+            document.getElementById('input-form').submit();
+        });
+
+        const startIndexInput = document.createElement('input');
+        startIndexInput.type = 'number';
+        startIndexInput.id = 'start-index';
+        startIndexInput.placeholder = 'Start Index';
+        startIndexInput.min = 0;
+        startIndexInput.max = '{{ (image_data_list | length) * 4 }}';
+        startIndexInput.value = '{{ start_index }}';
+
+        const startButton = document.createElement('button');
+        startButton.textContent = 'Start';
+        startButton.addEventListener('click', () => {
+            document.querySelector('input[name="start_index"]').value = document.getElementById('start-index').value;
+            document.getElementById('input-form').submit();
+        });
+
+        document.body.appendChild(prevButton);
+        document.body.appendChild(nextButton);
+        document.body.appendChild(startIndexInput);
+        document.body.appendChild(startButton);
+    </script>
+
+    <h2>Raw Images</h2>
+    {% for image in image_data_list %}
+    <a href="{{ url_for('serve_raw_image', filename=image.path.replace(img_folder + '/', '')) }}">{{ image.path.replace(img_folder + '/', '') }}</a><br>
+    {% endfor %}
+</body>
+</html>

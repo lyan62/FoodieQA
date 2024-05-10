@@ -1,0 +1,10 @@
+
+# if food_category_file is food_category_region, food_category should be one of
+# ["川", "湘", "赣", "黔", "徽", "闽", "粤", "浙", "苏", "鲁", "新疆", "云南", "东北","西北", "内蒙"，"上海"]
+
+food_category_file: "processed_food_category_region" # or "food_category_ingredient"
+img_folder: "/Users/wli/projects/foodie-dataset/data-collection"
+food_category: "上海" 
+save_folder: "image-qa" # folder under img_folder
+
+  
