@@ -33,6 +33,9 @@
             <label for="question{{ i }}">Question {{ i+1 }}:</label>
             <input type="text" id="question{{ i }}" name="question" {% if image_qa|length > i %}value="{{ image_qa[i].question }}"{% endif %} required>
             <br>
+            <label for="choices{{ i }}">Choices {{ i+1 }}:</label>
+            <input type="text" id="choices{{ i }}" name="choices" {% if image_qa|length > i %}value="{{ image_qa[i].choices }}"{% endif %}>
+            <br>
             <label for="answer{{ i }}">Answer {{ i+1 }}:</label>
             <select id="answer{{ i }}" name="answer" required>
                 <option value="">Select an answer</option>

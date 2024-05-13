@@ -70,10 +70,11 @@ def handle_user_input():
     if 'session_id' not in session:
         session['session_id'] = os.urandom(16).hex()
     questions = request.form.getlist('question')
+    choices = request.form.getlist('choices')
     answers = request.form.getlist('answer')
     question_types = request.form.getlist('question_type')
-    image_qa = [{"question": question, "answer": answer, "question_type": question_type} 
-                for question, answer, question_type in zip(questions, answers, question_types)]
+    image_qa = [{"question": question, "choices":choices, "answer": answer,  "question_type": question_type} 
+                for question, choices, answer, question_type in zip(questions, choices, answers, question_types)]
     save_image_data(current_index, image_qa)
 
 # Create a function to handle navigation
