@@ -52,4 +52,4 @@ Use `image_data_cleaning.ipynb` to parse it into clean json files.
     python app.py
     ```
 - Use the UI as the in the ![annotaion-guide](ui/annotation-guide.png)
-
+Allow choices to the answers to be non-images, see example as in ![following](ui/annotation-guide-choices.png). The "choices" field is optional.
