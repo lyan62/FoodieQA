@@ -53,3 +53,15 @@ Use `image_data_cleaning.ipynb` to parse it into clean json files.
     ```
 - Use the UI as the in the ![annotaion-guide](ui/annotation-guide.png)
 Allow choices to the answers to be non-images, **add choices split by comma ","**, see example as in ![following](ui/annotation-guide-choices.png). The "choices" field is optional.
+
+
+### Question validation
+
+Similar as in question formulation, but `cd val-ui`
+- Download the json file [here](https://drive.google.com/file/d/1AjgJ-L2fwIS5D0ZTMTMYd9UsPo99RSHZ/view?usp=drive_link)
+- Config the `config.yaml`, run `python app.py`. 
+notice that `food_categories: ["川", "上海"]` now supports multiple categories as a list.
+- Use the UI as see the example in the ![val-annotaion-guide](val-ui/val-annotation-guide.png)
+    - Mark "Is bad question" as *Yes* if you think the question is confusing and should not be included in the dataset
+    - Mark "Number of hops" as **single** if it is a question that **does not** require reasoning. e.g. 哪道菜菜色更亮？Mark it as **multiple** if it is a question require you to reason for multiple steps, e.g. 需要先辨认食物名称，或食物食材等. 如哪道菜不适合痛风患者食用？ 这类问题需要先辨认食材是否包含海鲜类食物，如包含海鲜，则不适合痛风患者食用。
+- Other features such as click **Next** to save and start index are the same as last time.
