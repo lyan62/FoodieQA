@@ -1,0 +1,9 @@
+
+# if food_category_file is ["0", "1", xxx]
+
+vqa_file: "text-food-qa"
+img_folder: "/Users/wli/projects/foodie-dataset/data-collection"
+food_categories: ["0"] # list
+save_folder: "text-qa-val" # folder under img_folder
+
+  

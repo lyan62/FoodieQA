@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Text QA</title>
+    <style>
+        .image-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .image-container img {
+            margin: 0 10px;
+            width: 400px;
+            height: 400px;
+            object-fit: contain;
+            background-color: #f0f0f0; /* Add a background color to fill the padding area */
+            padding: 5px; /* Add some padding around the image */
+        }
+    </style>
+</head>
+<body>
+    <h1>Text QA</h1>
+
+    <form id="input-form" method="POST">
+        <p>Question: {{ question }}</p>
+        <p>
+            {% for choice in choices %}
+              {% if loop.index0 == 0 %}A.{% elif loop.index0 == 1 %}B.{% elif loop.index0 == 2 %}C.{% elif loop.index0 == 3 %}D.{% endif %} {{ choice }}<br>
+            {% endfor %}
+        </p>
+        <br>
+        <label for="answer">Answer:</label>
+        <select id="answer" name="answer" required>
+            <option value="">Select an answer</option>
+            <option value="0" {% if image_qa and image_qa.answer == '0' %}selected{% endif %}>A</option>
+            <option value="1" {% if image_qa and image_qa.answer == '1' %}selected{% endif %}>B</option>
+            <option value="2" {% if image_qa and image_qa.answer == '2' %}selected{% endif %}>C</option>
+            <option value="3" {% if image_qa and image_qa.answer == '3' %}selected{% endif %}>D</option>
+            <option value="4" {% if image_qa and image_qa.answer == '4' %}selected{% endif %}>I do not know</option>
+        </select>
+        <br>
+        <label for="numhops">Number of hops:</label>
+        <select id="numhops" name="numhops" required>
+            <option value="">Select an answer</option>
+            <option value="multiple" {% if image_qa and image_qa.numhops == 'multiple' %}selected{% endif %}>multiple</option>
+            <option value="single" {% if image_qa and image_qa.numhops == 'single' %}selected{% endif %}>single</option>
+        </select>
+        <br>
+        <label for="badq">Is a bad question:</label>
+        <select id="badq" name="badq" required>
+            <option value="">Select an answer</option>
+            <option value="No" {% if image_qa and image_qa.badq == 'no' %}selected{% endif %}>No</option>
+            <option value="Yes" {% if image_qa and image_qa.badq == 'yes' %}selected{% endif %}>Yes</option>
+        </select>
+        <br>
+        <br>
+        <input type="hidden" name="direction" value="">
+        <input type="hidden" name="start_index" value="{{ start_index }}">
+    </form>
+
+    <p>Current Index: {{ start_index }}</p>
+    <p>Max Index: {{ max_index }}</p>
+    <script>
+        const prevButton = document.createElement('button');
+        prevButton.textContent = 'Previous';
+        prevButton.addEventListener('click', () => {
+            document.querySelector('input[name="direction"]').value = 'prev';
+            document.getElementById('input-form').submit();
+        });
+
+        const nextButton = document.createElement('button');
+        nextButton.textContent = 'Next';
+        nextButton.addEventListener('click', () => {
+            document.querySelector('input[name="direction"]').value = 'next';
+            document.getElementById('input-form').submit();
+        });
+
+        const startIndexInput = document.createElement('input');
+        startIndexInput.type = 'number';
+        startIndexInput.id = 'start-index';
+        startIndexInput.placeholder = 'Start Index';
+        startIndexInput.min = 0;
+        startIndexInput.max = '{{ (image_data_list | length) * 4 }}';
+        startIndexInput.value = '{{ start_index }}';
+
+        const startButton = document.createElement('button');
+        startButton.textContent = 'Start';
+        startButton.addEventListener('click', () => {
+            document.querySelector('input[name="start_index"]').value = document.getElementById('start-index').value;
+            document.getElementById('input-form').submit();
+        });
+
+        document.body.appendChild(prevButton);
+        document.body.appendChild(nextButton);
+        document.body.appendChild(startIndexInput);
+        document.body.appendChild(startButton);
+    </script>
+
+    <h2>Raw Images</h2>
+    {% for image in image_data_list %}
+    <a href="{{ url_for('serve_raw_image', filename=image.path.replace(img_folder + '/', '')) }}">{{ image.path.replace(img_folder + '/', '') }}</a><br>
+    {% endfor %}
+</body>
+</html>
