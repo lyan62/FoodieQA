@@ -1,0 +1,10 @@
+
+# if food_category_file is food_category_region, food_category should be one of
+# ["川", "湘", "赣", "黔", "徽", "闽", "粤", "浙", "苏", "鲁", "新疆", "云南", "东北","西北", "内蒙"，"上海"]
+
+vqa_file: "single-image-vqa-splitted"
+img_folder: "/Users/wli/projects/foodie-dataset/data-collection"
+food_categories: ["0"] # list
+save_folder: "vqa-val" # folder under img_folder
+
+  
