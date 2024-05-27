@@ -21,6 +21,7 @@
 </head>
 <body>
     <h1>Text QA</h1>
+    <div class="guideline-block"> <h2>Guidelines</h2> <div class="guideline-content"> <ul> <li>The UI does not require you to put in rationale, and there are only text choices.</li> <li>If you do not know the answer, rather than guess, select, <strong>I do not know</strong>.</li> <li>Mark "Is bad question" as <em>Yes</em> if you think the question is confusing and should not be included in the dataset, e.g. not only one choice is correct, too simple, too hard, the choices does not make sense, etc.</li> <li>Mark "Number of hops" as <strong>single</strong> if it is a question that <strong>does not</strong> require reasoning.</li> </ul> </div> </div>
 
     <form id="input-form" method="POST">
         <p>Question: {{ question }}</p>
@@ -97,9 +98,5 @@
         document.body.appendChild(startButton);
     </script>
 
-    <h2>Raw Images</h2>
-    {% for image in image_data_list %}
-    <a href="{{ url_for('serve_raw_image', filename=image.path.replace(img_folder + '/', '')) }}">{{ image.path.replace(img_folder + '/', '') }}</a><br>
-    {% endfor %}
 </body>
 </html>
