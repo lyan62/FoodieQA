@@ -21,7 +21,7 @@
 </head>
 <body>
     <h1>Text QA</h1>
-    <div class="guideline-block"> <h2>Guidelines</h2> <div class="guideline-content"> <ul> <li>The UI does not require you to put in rationale, and there are only text choices.</li> <li>If you do not know the answer, rather than guess, select, <strong>I do not know</strong>.</li> <li>Mark "Is bad question" as <em>Yes</em> if you think the question is confusing and should not be included in the dataset, e.g. not only one choice is correct, too simple, too hard, the choices does not make sense, etc.</li> <li>Mark "Number of hops" as <strong>single</strong> if it is a question that <strong>does not</strong> require reasoning.</li> </ul> </div> </div>
+    <div class="guideline-block"> <h2>说明</h2> <div class="guideline-content"> <ul> <li>本次回答不需要填写rationale, 并且只有文本选项.</li> <li>如果你<strong>不知道答案</strong>,不要猜答案，选择 <strong>I do not know</strong>.</li> <li>如果问题的选项不清楚，或问题不应该被放进数据集，请选 "Is bad question" as <em>Yes</em> 如： 不止一个选项正确，问题太简单，太难，或者选项设置不合理，等.</li> <li>如果本问题不需要推理，标记 "Number of hops" as <strong>single</strong> </li> </ul> </div> </div>
 
     <form id="input-form" method="POST">
         <p>Question: {{ question }}</p>
