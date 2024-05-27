@@ -68,10 +68,20 @@ notice that `food_categories: ["川", "上海"]` now supports multiple categorie
 
 
 **Single-image VQA**
-- Download the `single-image-vqa-splitted.json` file [here](https://drive.google.com/file/d/1AjgJ-L2fwIS5D0ZTMTMYd9UsPo99RSHZ/view?usp=drive_link)
+- Download the `single-image-vqa-splitted.json` file [here](https://drive.google.com/file/d/1csFC6J5cjAu_NgUVSiAp4uyJzDptjalm/view?usp=drive_link)
 - Config the `single_vqa_config.yaml`, run `python single_vqa_app.py`. 
 notice that `food_categories: ["0"] is or ["1"] or your assigned group.
 - Use the UI as see the example in the ![val-annotaion-guide](val-ui/val-annotation-guide.png), in this time the difference is only that there are text choices, and one image.
     - Mark "Is bad question" as *Yes* if you think the question is confusing and should not be included in the dataset, e.g. not only one choice is correct, too simple, does not require the image to answer.
+    - Mark "Number of hops" as **single** if it is a question that **does not** require reasoning. 
+- Other features such as click **Next** to save and start index are the same as last time.
+
+**Text QA**
+- Download the `text-qa-splitted.json` file [here](https://drive.google.com/file/d/19sXNkQefn1gGLFfrQHqLVwsfTMQARCvO/view?usp=drive_link)
+- Config the `text_qa_config.yaml`, run `python text_qa_app.py`. 
+notice that `food_categories: ["0"] is or ["1"] or your assigned group.
+- The UI does not require you to put in rationale, and there are only text choices.
+    - If you do not know the answer, rather than guess, select, **I do not know**.
+    - Mark "Is bad question" as *Yes* if you think the question is confusing and should not be included in the dataset, e.g. not only one choice is correct, too simple, too hard, the choices does not make sense, etc.
     - Mark "Number of hops" as **single** if it is a question that **does not** require reasoning. 
 - Other features such as click **Next** to save and start index are the same as last time.
