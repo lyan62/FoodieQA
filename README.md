@@ -69,7 +69,7 @@ notice that `food_categories: ["川", "上海"]` now supports multiple categorie
 
 **Single-image VQA**
 
-- Download the `single-image-vqa-splitted.json` file [here](https://drive.google.com/file/d/1csFC6J5cjAu_NgUVSiAp4uyJzDptjalm/view?usp=drive_link) (to the same folder as before)
+- Download the `single-image-vqa-splitted.json` file [here](https://drive.google.com/file/d/1niyTD0bi1eEcZZE4nm612asAZU0lLn2u/view?usp=drive_link) (to the same folder as before)
 - `cd val-ui`
 - Config the `single_vqa_config.yaml`, run `python single_vqa_app.py`. 
 notice that `food_categories: ["0"] is or ["1"] or your assigned group.
@@ -79,7 +79,7 @@ notice that `food_categories: ["0"] is or ["1"] or your assigned group.
 - Other features such as click **Next** to save and start index are the same as last time.
 
 **Text QA**
-- Download the `text-qa-splitted.json` file [here](https://drive.google.com/file/d/19sXNkQefn1gGLFfrQHqLVwsfTMQARCvO/view?usp=drive_link) (to the same folder as before)
+- Download the `text-qa-splitted.json` file [here](https://drive.google.com/file/d/1Xma0JBawYBaBDYc1ALI1SHcoRg6poHwO/view?usp=drive_link) (to the same folder as before)
 - `cd val-ui`
 - Config the `text_qa_config.yaml`, run `python text_qa_app.py`. 
 notice that `food_categories: ["0"] is or ["1"] or your assigned group.
