@@ -30,6 +30,7 @@ def get_query_list(question, data_dir, template=0):
             query_list.append({"text" : "图{}\n".format(idx2choice[i])})
         query_list.append({"text": "根据以上四张图回答问题," + PROMPT_GENERAL + "问题：{}, 答案为：图".format(q)})
     if template == 2:
+        q = q.replace("以上", "以下")
         query_list = [{"text":"根据以下四张图回答问题," + PROMPT_GENERAL}]
         images = question["images"]
         idx2choice = {0:"A", 1:"B", 2:"C", 3:"D"}
