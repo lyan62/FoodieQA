@@ -1,0 +1,7 @@
+data_dir: "/scratch3/wenyan/data/foodie"
+eval_file: "mivqa_filtered.json"
+cache_dir: "/scratch3/wenyan/cache"
+
+model_name: "HuggingFaceM4/idefics2-8b"
+prompt: 0
+out_dir: "/scratch3/wenyan/data/foodie/results"
