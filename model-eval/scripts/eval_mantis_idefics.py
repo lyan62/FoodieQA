@@ -63,7 +63,7 @@ def build_input(mivqa, idx, template=0):
     return messages, images
 
 def eval_question(mivqa, idx, prompt, add_prompt_general=False):
-    messages, images = build_input(mivqa, idx, prompt=prompt)
+    messages, images = build_input(mivqa, idx, template=prompt)
     prompt = processor.apply_chat_template(messages, add_generation_prompt=True)
     inputs = processor(text=prompt, images=images, return_tensors="pt")
     inputs = {k: v.to() for k, v in inputs.items()}
