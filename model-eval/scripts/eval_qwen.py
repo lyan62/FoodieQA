@@ -57,7 +57,7 @@ def get_query_list(question, data_dir, template=0):
         query_list.append({"text": "Assistant: 如果从给定选项ABCD中选择一个最合适的答案， 答案为：图"})
     return query_list
 
-def eval_qwen(mivqa, i, template=0):
+def eval_question(mivqa, i, template=0):
     question = mivqa[i]
     query_list = get_query_list(question, data_dir, template=template)
     query = tokenizer.from_list_format(query_list)
@@ -116,7 +116,7 @@ if __name__ == "__main__":
     os.makedirs(out_dir, exist_ok=True)
     with open(os.path.join(out_dir, out_file_name), "w") as f:
         for i in tqdm(range(len(mivqa))):
-            res = eval_question(mivqa, i, prompt=prompt, add_prompt_general=True)
+            res = eval_question(mivqa, i, template=prompt)
             f.write(json.dumps(res, ensure_ascii=False)+"\n")
                 
     print("Saved model response to %s, Calculate accuracy"%out_file_name)
