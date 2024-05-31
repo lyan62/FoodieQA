@@ -87,18 +87,22 @@ if __name__ == "__main__":
     # load_model
     torch.cuda.empty_cache()
     # Downloading model checkpoint to a local dir model_dir
-    # model_dir = snapshot_download('qwen/Qwen-VL', cache_dir=os.environ['HF_HOME'])
-    # model_dir = snapshot_download('qwen/Qwen-VL-Chat')
-
-
-    # Loading local checkpoints
+    try:
+        model_dir = snapshot_download('qwen/Qwen-VL', cache_dir=os.environ['HF_HOME'])
+        tokenizer = AutoTokenizer.from_pretrained(model_dir, trust_remote_code=True, do_image_splitting=False)
+        model = AutoModelForCausalLM.from_pretrained(
+            model_dir,
+            device_map="auto",
+            trust_remote_code=True
+        ).eval()
     # trust_remote_code is still set as True since we still load codes from local dir instead of transformers
-    tokenizer = AutoTokenizer.from_pretrained('qwen/Qwen-VL', trust_remote_code=True, do_image_splitting=False)
-    model = AutoModelForCausalLM.from_pretrained(
-        'qwen/Qwen-VL',
-        device_map="auto",
-        trust_remote_code=True
-    ).eval()
+    except:
+        tokenizer = AutoTokenizer.from_pretrained('qwen/Qwen-VL', trust_remote_code=True, do_image_splitting=False)
+        model = AutoModelForCausalLM.from_pretrained(
+            'qwen/Qwen-VL',
+            device_map="auto",
+            trust_remote_code=True
+        ).eval()
 
     # read_data
     data_dir = args.data_dir
