@@ -90,26 +90,26 @@ def format_text_input(question, template=0, add_prompt_general=False):
     return text_input
         
 
-def build_input(mivqa, idx, prompt=0):
+def build_input(mivqa, idx, prompt=0, add_prompt_general=False):
     messages = []
     question = mivqa[idx]
     if prompt == 0 or prompt ==1:
         for i in range(4):
             img_input = format_image_input(i, template=prompt)
             messages.append(img_input)
-        text_input = format_text_input(question, template=prompt)
+        text_input = format_text_input(question, template=prompt, add_prompt_general=add_prompt_general)
         messages.append(text_input)
         
         images = [load_image(os.path.join(data_dir, img)) for img in question["images"]]
     if prompt ==2:
-        text_input = format_text_input(question, template=2)
+        text_input = format_text_input(question, template=2, add_prompt_general=add_prompt_general)
         messages.append(text_input)
         for i in range(4):
             img_input = format_image_input(i, template=1)
             messages.append(img_input)
         messages.append(format_text_prompt("问题：{}, 答案为：图".format(question["question"])))
     if prompt == 3:
-        text_input = format_text_input(question, template=3)
+        text_input = format_text_input(question, template=3, add_prompt_general=add_prompt_general)
         messages.append(text_input)
         for i in range(4):
             img_input = format_image_input(i, template=2)
@@ -119,8 +119,8 @@ def build_input(mivqa, idx, prompt=0):
     return messages, images
 
 
-def eval_question(mivqa, idx, prompt):
-    messages, images = build_input(mivqa, idx, prompt=prompt)
+def eval_question(mivqa, idx, prompt, add_prompt_general=False):
+    messages, images = build_input(mivqa, idx, prompt=prompt, add_prompt_general=add_prompt_general)
     prompt = processor.apply_chat_template(messages, add_generation_prompt=True)
     inputs = processor(text=prompt, images=images, return_tensors="pt")
     inputs = {k: v.to() for k, v in inputs.items()}
@@ -164,7 +164,7 @@ if __name__ == "__main__":
     print("Evaluating model on {} questions".format(len(mivqa)))
     with open(os.path.join(out_dir, out_file_name), "w") as f:
         for i in tqdm(range(len(mivqa))):
-            res = eval_question(mivqa, i, img_template=0, text_template=0)
+            res = eval_question(mivqa, i, prompt=prompt, add_prompt_general=True)
             f.write(json.dumps(res)+"\n")
             
     print("Calculate accuracy")
