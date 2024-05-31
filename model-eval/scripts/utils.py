@@ -12,6 +12,15 @@ def read_mivqa(data_dir, mivqa_file):
         
     return mivqa
 
+def parse_mantis(res):
+    ans = res["response"][0]
+    ans2idx = {
+        "A":"0",
+        "B":"1",
+        "C":"2",
+        "D":"3"
+    }
+    return ans2idx[ans.upper()]
 
 def parse_idefics(res):
     ans = res["response"][0].split("\nAssistant: ")[1].split("图")[1][0]
