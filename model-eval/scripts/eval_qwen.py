@@ -34,7 +34,7 @@ def get_query_list(question, data_dir, template=0):
         query_list.append({"text": "根据以上四张图回答问题," + PROMPT_GENERAL + "问题：{}, 答案为：图".format(q)})
     
     if template == 2:
-        q = q.replace("以上", "以下")
+        q = q.replace("以下", "以上")
         query_list = [{"text":"根据以下四张图回答问题," + PROMPT_GENERAL}]
         images = question["images"]
         
@@ -45,11 +45,13 @@ def get_query_list(question, data_dir, template=0):
     
     if template == 3:
         q = q.replace("以下", "以上")
+        images = question["images"]
         query_list = [{"image": os.path.join(data_dir, image)} for image in question["images"]]
         query_list.append({"text": "根据以上四张图回答问题, 问题：{}, 答案为：Picture".format(q)})
         
     if template == 4:
-        q = q.replace("以下", "以上")
+        q = q.replace("以上", "以下")
+        images = question["images"]
         query_list = [{"text": "Human: 问题{}，选项有: ".format(q)}]
         for i in range(len(images)):
             query_list.append({"text" : "图{}".format(idx2choice[i])})
