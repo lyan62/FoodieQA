@@ -167,6 +167,6 @@ if __name__ == "__main__":
             res = eval_question(mivqa, i, prompt=prompt, add_prompt_general=True)
             f.write(json.dumps(res)+"\n")
             
-    print("Calculate accuracy")
+    print("Saved model response to %s, Calculate accuracy"%out_file_name)
     with open(os.path.join(out_dir, out_file_name), "r") as f:
         accuracy = utils.get_accuracy(f, mivqa, parse_fn=utils.parse_idefics)
