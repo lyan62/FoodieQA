@@ -18,7 +18,7 @@ PROMPT_GENERAL = "请从给定选项ABCD中选择一个最合适的答案。"
 def get_query_list(question, data_dir, template=0):
     q = question["question"].strip()
     idx2choice = {0:"A", 1:"B", 2:"C", 3:"D"}
-    
+    query_list = []
     if template == 0:
         q = q.replace("以下", "以上")
         query_list = [{"image": os.path.join(data_dir, image)} for image in question["images"]]
