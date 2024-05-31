@@ -11,37 +11,50 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 import os 
 
 import utils
+import argparse
 
 PROMPT_GENERAL = "请从给定选项ABCD中选择一个最合适的答案。"
 
 def get_query_list(question, data_dir, template=0):
     q = question["question"].strip()
+    idx2choice = {0:"A", 1:"B", 2:"C", 3:"D"}
+    
     if template == 0:
         q = q.replace("以下", "以上")
         query_list = [{"image": os.path.join(data_dir, image)} for image in question["images"]]
-        query_list.append({"text": "根据以上四张图回答问题，他们分别为图A, 图B, 图C, 图D" + PROMPT_GENERAL + "问题：{}, 答案为：图".format(q)})
+        query_list.append({"text": "根据以上四张图回答问题，他们分别为图A, 图B, 图C, 图D, " + PROMPT_GENERAL + "问题：{}, 答案为：图".format(q)})
+    
     if template == 1:
         q = q.replace("以下", "以上")
         query_list = []
         images = question["images"]
-        idx2choice = {0:"A", 1:"B", 2:"C", 3:"D"}
         for i in range(len(images)):
             query_list.append({"image" : os.path.join(data_dir, images[i])})
             query_list.append({"text" : "图{}\n".format(idx2choice[i])})
         query_list.append({"text": "根据以上四张图回答问题," + PROMPT_GENERAL + "问题：{}, 答案为：图".format(q)})
+    
     if template == 2:
         q = q.replace("以上", "以下")
         query_list = [{"text":"根据以下四张图回答问题," + PROMPT_GENERAL}]
         images = question["images"]
-        idx2choice = {0:"A", 1:"B", 2:"C", 3:"D"}
+        
         for i in range(len(images)):
             query_list.append({"text" : "图{}".format(idx2choice[i])})
             query_list.append({"image" : os.path.join(data_dir, images[i])})
-        query_list.append({"text": "问题：{}， 答案为：图".format(question["question"])})
+        query_list.append({"text": "问题：{}, 答案为：图".format(q)})
+    
     if template == 3:
         q = q.replace("以下", "以上")
         query_list = [{"image": os.path.join(data_dir, image)} for image in question["images"]]
-        query_list.append({"text": "根据以上四张图回答问题, 问题：{}, 答案为：Picture".format(question["question"])})
+        query_list.append({"text": "根据以上四张图回答问题, 问题：{}, 答案为：Picture".format(q)})
+        
+    if template == 4:
+        q = q.replace("以下", "以上")
+        query_list = [{"text": "Human: 问题{}，选项有: ".format(q)}]
+        for i in range(len(images)):
+            query_list.append({"text" : "图{}".format(idx2choice[i])})
+            query_list.append({"image" : os.path.join(data_dir, images[i])})
+        query_list.append({"text": "Assistant: 如果从给定选项ABCD中选择一个最合适的答案， 答案为：图"})
     return query_list
 
 def eval_qwen(mivqa, i, template=0):
@@ -58,43 +71,50 @@ def eval_qwen(mivqa, i, template=0):
     }
     
 if __name__ == "__main__":
-    with open("config.yaml", "r") as file:
-        config = yaml.safe_load(file)
+    argparser = argparse.ArgumentParser()
+    argparser.add_argument("--cache_dir", default="/scratch/project/dd-23-107/wenyan/cache")
+    argparser.add_argument("--data_dir", default="/scratch/project/dd-23-107/wenyan/data/foodie")
+    argparser.add_argument("--eval_file", default="mivqa_filtered.json")
+    argparser.add_argument("--prompt", default=0)
+    argparser.add_argument("--out_dir", default="/scratch/project/dd-23-107/wenyan/data/foodie/results")
+    argparser.add_argument("--model_name", default="qwen/Qwen-VL")
     
-    os.environ['HF_HOME'] = config["cache_dir"] #'/scratch3/wenyan/cache'
+    args = argparser.parse_args()
+    
+    os.environ['HF_HOME'] = args.cache_dir #'/scratch3/wenyan/cache'
 
 
     # load_model
     torch.cuda.empty_cache()
     # Downloading model checkpoint to a local dir model_dir
-    model_dir = snapshot_download('qwen/Qwen-VL', cache_dir=os.environ['HF_HOME'])
+    # model_dir = snapshot_download('qwen/Qwen-VL', cache_dir=os.environ['HF_HOME'])
     # model_dir = snapshot_download('qwen/Qwen-VL-Chat')
 
 
     # Loading local checkpoints
     # trust_remote_code is still set as True since we still load codes from local dir instead of transformers
-    tokenizer = AutoTokenizer.from_pretrained(model_dir, trust_remote_code=True, do_image_splitting=False)
+    tokenizer = AutoTokenizer.from_pretrained('qwen/Qwen-VL', trust_remote_code=True, do_image_splitting=False)
     model = AutoModelForCausalLM.from_pretrained(
-        model_dir,
+        'qwen/Qwen-VL',
         device_map="auto",
         trust_remote_code=True
     ).eval()
 
     # read_data
-    data_dir = config["data_dir"]
-    mivqa_file = config["eval_file"]
-    prompt = config["prompt"]
-    out_dir = config["out_dir"]
+    data_dir = args.data_dir
+    mivqa_file = args.eval_file
+    prompt = args.prompt
+    out_dir = args.out_dir
     
     mivqa = utils.read_mivqa(data_dir, mivqa_file)
     
-    out_file_name = "mivqa_qwen" + "_prompt" + str(prompt) + ".jsonl"
-    
-    with open(out_file_name, "w") as f:
+    out_file_name = "mivqa_qwen-vl" + "_prompt" + str(prompt) + ".jsonl"
+    os.makedirs(out_dir, exist_ok=True)
+    with open(os.path.join(out_dir, out_file_name), "w") as f:
         for i in tqdm(range(len(mivqa))):
-            res = eval_qwen(mivqa, i, template=prompt)
+            res = eval_question(mivqa, i, prompt=prompt, add_prompt_general=True)
             f.write(json.dumps(res, ensure_ascii=False)+"\n")
                 
     print("Saved model response to %s, Calculate accuracy"%out_file_name)
-    with open(os.path.join(out_dir, out_file_name), "r") as f:
+    with open(os.path.join(out_dir, out_file_name), "r", encoding="utf-8") as f:
         accuracy = utils.get_accuracy(f, mivqa, parse_fn=utils.parse_qwen)

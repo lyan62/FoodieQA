@@ -11,6 +11,7 @@ from transformers import AutoProcessor, AutoModelForVision2Seq
 from transformers.image_utils import load_image
 
 import utils
+import argparse
 
 PROMPT_GENERAL = "请从给定选项ABCD中选择一个最合适的答案。"
 
@@ -93,14 +94,13 @@ def format_text_input(question, template=0, add_prompt_general=False):
 def build_input(mivqa, idx, prompt=0, add_prompt_general=False):
     messages = []
     question = mivqa[idx]
+    images = [load_image(os.path.join(data_dir, img)) for img in question["images"]]
     if prompt == 0 or prompt ==1:
         for i in range(4):
             img_input = format_image_input(i, template=prompt)
             messages.append(img_input)
         text_input = format_text_input(question, template=prompt, add_prompt_general=add_prompt_general)
         messages.append(text_input)
-        
-        images = [load_image(os.path.join(data_dir, img)) for img in question["images"]]
     if prompt ==2:
         text_input = format_text_input(question, template=2, add_prompt_general=add_prompt_general)
         messages.append(text_input)
@@ -115,7 +115,6 @@ def build_input(mivqa, idx, prompt=0, add_prompt_general=False):
             img_input = format_image_input(i, template=2)
             messages.append(img_input)
         messages.append(format_text_prompt("如果从给定选项ABCD中选择一个最合适的答案：{}, 答案为：图".format(question["question"])))
-        
     return messages, images
 
 
@@ -132,16 +131,20 @@ def eval_question(mivqa, idx, prompt, add_prompt_general=False):
     }
     
 if __name__ == "__main__":
-    with open("config.yaml", "r") as file:
-        config = yaml.safe_load(file)
-    
-    os.environ['HF_HOME'] = config["cache_dir"] #'/scratch3/wenyan/cache'
+    argparser = argparse.ArgumentParser()
+    argparser.add_argument("--cache_dir", default="/scratch/project/dd-23-107/wenyan/cache")
+    argparser.add_argument("--data_dir", default="/scratch/project/dd-23-107/wenyan/data/foodie")
+    argparser.add_argument("--eval_file", default="mivqa_filtered.json")
+    argparser.add_argument("--prompt", type=int, default=3)
+    argparser.add_argument("--out_dir", default="/scratch/project/dd-23-107/wenyan/data/foodie/results")
+    argparser.add_argument("--model_name", default="HuggingFaceM4/idefics2-8b")
+    args = argparser.parse_args()
 
-
+    os.environ["HF_HOME"] = args.cache_dir
     # load_model
     torch.cuda.empty_cache()
 
-    model_name = config.get("model_name", "HuggingFaceM4/idefics2-8b")
+    model_name = "HuggingFaceM4/idefics2-8b"
     processor = AutoProcessor.from_pretrained(model_name, 
                                               cache_dir=os.environ["HF_HOME"], 
                                               do_image_splitting=False
@@ -152,21 +155,22 @@ if __name__ == "__main__":
         )
 
     # read_data
-    data_dir = config["data_dir"]
-    mivqa_file = config["eval_file"]
-    prompt = config["prompt"]
-    out_dir = config["out_dir"]
+    data_dir = args.data_dir
+    mivqa_file = args.eval_file
+    prompt = args.prompt
+    out_dir = args.out_dir
     
     mivqa = utils.read_mivqa(data_dir, mivqa_file)
     
     out_file_name = "mivqa_" + model_name.split("/")[-1] + "_prompt" + str(prompt) + ".jsonl"
+    os.makedirs(out_dir, exist_ok=True)
     
     print("Evaluating model on {} questions".format(len(mivqa)))
     with open(os.path.join(out_dir, out_file_name), "w") as f:
         for i in tqdm(range(len(mivqa))):
             res = eval_question(mivqa, i, prompt=prompt, add_prompt_general=True)
-            f.write(json.dumps(res)+"\n")
+            f.write(json.dumps(res, ensure_ascii=False)+"\n")
             
     print("Saved model response to %s, Calculate accuracy"%out_file_name)
-    with open(os.path.join(out_dir, out_file_name), "r") as f:
+    with open(os.path.join(out_dir, out_file_name), "r", encoding="utf-8") as f:
         accuracy = utils.get_accuracy(f, mivqa, parse_fn=utils.parse_idefics)

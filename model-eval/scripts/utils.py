@@ -23,6 +23,20 @@ def parse_idefics(res):
     }
     return ans2idx[ans.upper()]
 
+def parse_qwen(res, template=0):
+    ans2idx = {
+        "A":"0",
+        "B":"1",
+        "C":"2",
+        "D":"3"
+    }
+    if template == 3:
+        ans = res["response"].split("答案为：Picture")[1].strip()[0]
+        return ans
+    else:
+        ans = res["response"].split("答案为：")[1].split("图")[1][0]
+        return ans2idx[ans.upper()]
+    
 def get_accuracy(result_file, mivqa, parse_fn=parse_idefics):
     # get gts
     gt = [x["answer"] for x in mivqa]
