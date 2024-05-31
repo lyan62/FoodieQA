@@ -120,5 +120,4 @@ if __name__ == "__main__":
             f.write(json.dumps(res, ensure_ascii=False)+"\n")
                 
     print("Saved model response to %s, Calculate accuracy"%out_file_name)
-    with open(os.path.join(out_dir, out_file_name), "r", encoding="utf-8") as f:
-        accuracy = utils.get_accuracy(f, mivqa, parse_fn=utils.parse_qwen)
+    accuracy = utils.get_accuracy(os.path.join(out_dir, out_file_name), mivqa, parse_fn=utils.parse_qwen)

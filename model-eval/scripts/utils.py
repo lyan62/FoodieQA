@@ -43,7 +43,7 @@ def get_accuracy(result_file, mivqa, parse_fn=parse_idefics):
     
     # get all answers
     data = []
-    with open(result_file, "r") as f:
+    with open(result_file, "r", encoding='utf-8') as f:
         for line in f:
             data.append(json.loads(line))
     ## get answers
