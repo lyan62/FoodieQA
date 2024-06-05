@@ -68,9 +68,9 @@ def main(args):
     sivqa = sivqa_utils.read_sivqa(data_dir)
     
     if "mantis" in args.model_name:
-        out_file_name = "mivqa_" + 'mantis' + "_prompt" + str(template) + ".jsonl"
+        out_file_name = "sivqa_" + 'mantis' + "_prompt" + str(template) + ".jsonl"
     else:
-        out_file_name = "mivqa_" + 'idefics' + "_prompt" + str(template) + ".jsonl"
+        out_file_name = "sivqa_" + 'idefics' + "_prompt" + str(template) + ".jsonl"
     os.makedirs(out_dir, exist_ok=True)
     
     ## eval
