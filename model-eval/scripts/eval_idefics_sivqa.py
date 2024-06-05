@@ -47,7 +47,7 @@ class Evaluator(object):
         
         return {
             "response": generated_texts,
-            "qid": sivqa[idx]["qid"]
+            "qid": sivqa[idx]["question_id"]
         }
 
 
@@ -65,7 +65,7 @@ def main(args):
     prompt = args.prompt
     out_dir = args.out_dir
     
-    mivqa = sivqa_utils.read_sivqa(data_dir, eval_file)
+    sivqa = sivqa_utils.read_sivqa(data_dir)
     
     if "mantis" in args.model_name:
         out_file_name = "mivqa_" + 'mantis' + "_prompt" + str(prompt) + ".jsonl"
@@ -74,27 +74,27 @@ def main(args):
     os.makedirs(out_dir, exist_ok=True)
     
     ## eval
-    print("Evaluating model on {} questions".format(len(mivqa)))
+    print("Evaluating model on {} questions".format(len(sivqa)))
     with open(os.path.join(out_dir, out_file_name), "w") as f:
-        for i in tqdm(range(len(mivqa))):
-            res = evaluator.eval_question(mivqa, i, model, processor, data_dir)
+        for idx in tqdm(range(len(sivqa))):
+            res = evaluator.eval_question(sivqa, idx, model, processor, data_dir, args)
             f.write(json.dumps(res, ensure_ascii=False)+"\n")
             
     print("Saved model response to %s, Calculate accuracy"%out_file_name)
     accuracy = utils.get_accuracy(os.path.join(out_dir, out_file_name), 
-                                  mivqa, parse_fn=utils.parse_idefics_sivqa)
+                                  sivqa, parse_fn=utils.parse_idefics_sivqa)
     print(accuracy)
     
     
 
 if __name__ == "__main__":
     argparser = argparse.ArgumentParser()
-    argparser.add_argument("--cache_dir", default="/scratch/project/dd-23-107/wenyan/cache")
-    argparser.add_argument("--data_dir", default="/scratch/project/dd-23-107/wenyan/data/foodie")
+    argparser.add_argument("--cache_dir", default="/scratch3/wenyan/cache")
+    argparser.add_argument("--data_dir", default="/scratch3/wenyan/data/foodie")
     argparser.add_argument("--eval_file", default="sivqa_filtered.json")
     argparser.add_argument("--prompt", type=int, default=0)
-    argparser.add_argument("--out_dir", default="/scratch/project/dd-23-107/wenyan/data/foodie/results")
-    argparser.add_argument("--model_name", default="TIGER-Lab/Mantis-8B-Idefics2")
+    argparser.add_argument("--out_dir", default="/scratch3/wenyan/data/foodieresults")
+    argparser.add_argument("--model_name", default="HuggingFaceM4/idefics2-8b") # "TIGER-Lab/Mantis-8B-Idefics2"
     argparser.add_argument("--show_food_name", action="store_true", default=False)
     argparser.add_argument("--template", type=int, default=0)
     argparser.add_argument("--lang", default="zh")
