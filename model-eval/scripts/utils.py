@@ -1,6 +1,7 @@
 import json
 import os 
 from sklearn.metrics import accuracy_score
+import random
 
 # data_dir = "/scratch3/wenyan/data/foodie"
 # mivqa_file = "mivqa_filtered.json"
@@ -30,6 +31,36 @@ def parse_idefics(res):
         "C":"2",
         "D":"3"
     }
+    return ans2idx[ans.upper()]
+
+def parse_idefics_sivqa(res):
+    ans = res["response"][0].split("\nAssistant: ")[1].split("（")[1][0]
+    ans2idx = {
+        "A":"0",
+        "B":"1",
+        "C":"2",
+        "D":"3"
+    }
+    
+    # fallback to random
+    if ans not in ans2idx:
+        print("Can not parse response, falling back to random...")
+        return random.choice(list(ans2idx.values()))
+    return ans2idx[ans.upper()]
+
+def parse_qwen_sivqa(res):
+    ans = res["response"].split("（")[1][0]
+    ans2idx = {
+        "A":"0",
+        "B":"1",
+        "C":"2",
+        "D":"3"
+    }
+    
+    # fallback to random
+    if ans not in ans2idx:
+        print("Can not parse response, falling back to random...")
+        return random.choice(list(ans2idx.values()))
     return ans2idx[ans.upper()]
 
 def parse_qwen(res, template=0):
