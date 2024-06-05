@@ -62,15 +62,15 @@ def main(args):
     # read_data
     data_dir = args.data_dir
     eval_file = args.eval_file
-    prompt = args.prompt
+    template = args.template
     out_dir = args.out_dir
     
     sivqa = sivqa_utils.read_sivqa(data_dir)
     
     if "mantis" in args.model_name:
-        out_file_name = "mivqa_" + 'mantis' + "_prompt" + str(prompt) + ".jsonl"
+        out_file_name = "mivqa_" + 'mantis' + "_prompt" + str(template) + ".jsonl"
     else:
-        out_file_name = "mivqa_" + 'idefics' + "_prompt" + str(prompt) + ".jsonl"
+        out_file_name = "mivqa_" + 'idefics' + "_prompt" + str(template) + ".jsonl"
     os.makedirs(out_dir, exist_ok=True)
     
     ## eval
@@ -92,8 +92,7 @@ if __name__ == "__main__":
     argparser.add_argument("--cache_dir", default="/scratch3/wenyan/cache")
     argparser.add_argument("--data_dir", default="/scratch3/wenyan/data/foodie")
     argparser.add_argument("--eval_file", default="sivqa_filtered.json")
-    argparser.add_argument("--prompt", type=int, default=0)
-    argparser.add_argument("--out_dir", default="/scratch3/wenyan/data/foodieresults")
+    argparser.add_argument("--out_dir", default="/scratch3/wenyan/data/foodie/results")
     argparser.add_argument("--model_name", default="HuggingFaceM4/idefics2-8b") # "TIGER-Lab/Mantis-8B-Idefics2"
     argparser.add_argument("--show_food_name", action="store_true", default=False)
     argparser.add_argument("--template", type=int, default=0)
