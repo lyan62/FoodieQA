@@ -67,7 +67,7 @@ def main(args):
     
     sivqa = sivqa_utils.read_sivqa(data_dir)
     
-    if "mantis" in args.model_name:
+    if "Mantis" in args.model_name:
         out_file_name = "sivqa_" + 'mantis' + "_prompt" + str(template) + ".jsonl"
     else:
         out_file_name = "sivqa_" + 'idefics' + "_prompt" + str(template) + ".jsonl"
@@ -94,7 +94,7 @@ if __name__ == "__main__":
     argparser.add_argument("--data_dir", default="/scratch3/wenyan/data/foodie")
     argparser.add_argument("--eval_file", default="sivqa_filtered.json")
     argparser.add_argument("--out_dir", default="/scratch3/wenyan/data/foodie/results")
-    argparser.add_argument("--model_name", default="HuggingFaceM4/idefics2-8b") # "TIGER-Lab/Mantis-8B-Idefics2"
+    argparser.add_argument("--model_name", default="TIGER-Lab/Mantis-8B-Idefics2") # "TIGER-Lab/Mantis-8B-Idefics2" "HuggingFaceM4/idefics2-8b"
     argparser.add_argument("--show_food_name", action="store_true", default=False)
     argparser.add_argument("--template", type=int, default=0)
     argparser.add_argument("--lang", default="zh")
