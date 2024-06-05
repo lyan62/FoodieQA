@@ -80,10 +80,11 @@ def main(args):
             res = evaluator.eval_question(sivqa, idx, model, processor, data_dir, args)
             f.write(json.dumps(res, ensure_ascii=False)+"\n")
             
-    print("Saved model response to %s, Calculate accuracy"%out_file_name)
-    accuracy = utils.get_accuracy(os.path.join(out_dir, out_file_name), 
-                                  sivqa, parse_fn=utils.parse_idefics_sivqa)
-    print(accuracy)
+    print("Saved model response to %s"%out_file_name)
+    # print("Calculate accuracy...")
+    # accuracy = utils.get_accuracy(os.path.join(out_dir, out_file_name), 
+    #                               sivqa, parse_fn=utils.parse_idefics_sivqa)
+    # print(accuracy)
     
     
 
