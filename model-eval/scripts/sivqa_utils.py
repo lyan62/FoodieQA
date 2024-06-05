@@ -37,7 +37,7 @@ def format_text_prompt(q, choices_str, template=0, lang="zh"):
             return ["你是一个智能助手，现在请看图回答以下选择题：{} 选项有: {}".format(q, choices_str), "我从所提供的选项中选择一个正确答案，为（"]
             # return "用户：你是一个智能助手，现在请看图回答以下选择题：{} 选项有: {}, 智能助手：我从所提供的选项中选择一个正确答案，为（".format(q, choices_str)
         if template == 3:
-            return ["{} 这是选项: {} 请根据上图从所提供的选项中选择一个正确答案。".format(q, choices_str), "我选择（"]
+            return ["{} 这是选项: {} 请根据上图从所提供的选项中选择一个正确答案。请输出选项字母。".format(q, choices_str), "我选择（"]
             # return "用户：{} 这是选项: {} 请根据上图从所提供的选项中选择一个正确答案。智能助手：我选择（".format(q, choices_str)
     else:
         if template == 0:
