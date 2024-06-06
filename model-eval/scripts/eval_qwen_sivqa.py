@@ -7,8 +7,8 @@ import os
 import json
 from tqdm import tqdm 
 
-from transformers import AutoProcessor, AutoModelForVision2Seq
-from transformers.image_utils import load_image
+from modelscope import snapshot_download
+from transformers import AutoModelForCausalLM, AutoTokenizer
 
 import sivqa_utils
 import utils
@@ -20,35 +20,36 @@ class Evaluator(object):
         self.model_name = args.model_name
     
     def _load_model(self):
-        processor = AutoProcessor.from_pretrained(self.model_name, 
-                                              cache_dir=os.environ["HF_HOME"],
-                                              do_image_splitting=False) # do_image_splitting is False by default
-        model = AutoModelForVision2Seq.from_pretrained(
-            self.model_name, cache_dir=os.environ["HF_HOME"],
-            device_map="auto", torch_dtype=torch.float16)
+        model_dir = snapshot_download('qwen/Qwen-VL', cache_dir=os.environ['HF_HOME'])
+        # model_dir = snapshot_download('qwen/Qwen-VL-Chat')
+
+        # Loading local checkpoints
+        # trust_remote_code is still set as True since we still load codes from local dir instead of transformers
+        processor = AutoTokenizer.from_pretrained(model_dir, trust_remote_code=True, do_image_splitting=False)
+        model = AutoModelForCausalLM.from_pretrained(
+            model_dir,
+            device_map="auto",
+            trust_remote_code=True
+        ).eval()
         return model, processor
     
     def eval_question(self, sivqa, idx, model, processor, data_dir, args):
         question = sivqa[idx]
-        messages = sivqa_utils.get_prompt_idefics(question, data_dir, 
+        query_list = sivqa_utils.get_prompt_qwen(question, data_dir, 
                                                     show_food_name=args.show_food_name, 
                                                     template=args.template,
                                                     lang=args.lang)
-        images = [load_image(os.path.join(data_dir, question["food_meta"]["food_file"]))]
-        prompt = processor.apply_chat_template(messages, add_generation_prompt=True)
-        inputs = processor(text=prompt, images=images, return_tensors="pt")
-        inputs = {k: v.to() for k, v in inputs.items()}
-        generated_ids = model.generate(**inputs, max_new_tokens=500)
         
-        if "mantis" in self.model_name:
-            generated_texts = processor.batch_decode(generated_ids[:, inputs["input_ids"].shape[1]:], skip_special_tokens=True)
-        else:
-            generated_texts = processor.batch_decode(generated_ids, skip_special_tokens=True)
-        
+        query = processor.from_list_format(query_list)
+        inputs = processor(query, return_tensors='pt')
+        inputs = inputs.to(model.device)
+        pred = model.generate(**inputs)
+        response = processor.decode(pred.cpu()[0], skip_special_tokens=False)
         return {
-            "response": generated_texts,
+            "response": response,
             "qid": sivqa[idx]["question_id"]
         }
+            
 
 
 
@@ -69,6 +70,8 @@ def main(args):
     
     if "Mantis" in args.model_name:
         out_file_name = "sivqa_" + 'mantis' + "_prompt" + str(template) + ".jsonl"
+    elif "qwen" in args.model_name:
+        out_file_name = "sivqa_" + 'qwen' + "_prompt" + str(template) + ".jsonl"
     else:
         out_file_name = "sivqa_" + 'idefics' + "_prompt" + str(template) + ".jsonl"
     os.makedirs(out_dir, exist_ok=True)
@@ -94,7 +97,7 @@ if __name__ == "__main__":
     argparser.add_argument("--data_dir", default="/scratch3/wenyan/data/foodie")
     argparser.add_argument("--eval_file", default="sivqa_filtered.json")
     argparser.add_argument("--out_dir", default="/scratch3/wenyan/data/foodie/results")
-    argparser.add_argument("--model_name", default="TIGER-Lab/Mantis-8B-Idefics2") # "TIGER-Lab/Mantis-8B-Idefics2" "HuggingFaceM4/idefics2-8b"
+    argparser.add_argument("--model_name", default="qwen")
     argparser.add_argument("--show_food_name", action="store_true", default=False)
     argparser.add_argument("--template", type=int, default=0)
     argparser.add_argument("--lang", default="zh")

@@ -1,0 +1,3 @@
+[submodule ".Yi"]
+	path = Yi/.Yi
+	url = https://github.com/lyan62/Yi.git

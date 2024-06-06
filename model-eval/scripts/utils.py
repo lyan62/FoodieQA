@@ -33,8 +33,8 @@ def parse_idefics(res):
     }
     return ans2idx[ans.upper()]
 
-def parse_idefics_sivqa(res):
-    ans = res["response"][0].split("\nAssistant: ")[1].split("（")[1][0]
+def parse_idefics_sivqa(res, template):
+    ans = res["response"][0].split("\nAssistant: ")[1][0]
     ans2idx = {
         "A":"0",
         "B":"1",
