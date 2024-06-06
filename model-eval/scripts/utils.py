@@ -93,6 +93,8 @@ def get_accuracy(result_file, mivqa, parse_fn=parse_idefics):
             ans = parse_fn(d)
             all_answers.append(ans)
         except:
+            # fall back to random
+            all_answers.append(random.choice(["0", "1", "2", "3"]))
             print(d["qid"], d)
     
     accuracy = accuracy_score(all_answers, gt)
