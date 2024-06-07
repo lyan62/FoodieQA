@@ -133,6 +133,43 @@ Human: 问题{}，选项有:
 Assistant: 如果从给定选项ABCD中选择一个最合适的答案， 答案为：图
 ```
 
+English prompts:
+```
+prompt 0 
+<img1><img2><img3><img4>
+"Answer the following question according to the provided four images, they corresponds 
+to Option (A), Option (B), Option (C), Option (D). Choose one best answer from the given options.
+Question: {}, your answer is: Option ("
+
+promtp 1
+"Answer the following question according to the provided four images which corresponds 
+to Option (A), Option (B), Option (C), Option (D). Choose one best answer from the given options.
+The options are:
+<img1>Option (A)
+<img2>Option (B)
+<img3>Option (C)
+<img4>Option (D)
+Question: {}, your answer is: Option ("
+
+prompt 2
+"Answer the following question according to the provided four images, 
+and choose one best answer from the given options.
+The options are:
+<img1>Option (A)
+<img2>Option (B)
+<img3>Option (C)
+<img4>Option (D)
+Question: {}, your answer is: Option ("
+
+prompt 3
+"Human: Question{} The options are: 
+Option (A)<img1>
+Option (B)<img2>
+Option (C)<img3>
+Option (D)<img4>
+Assistant: If I have to choose one best answer from the given options， the answer is：Option ("
+```
+
 #### Single-image VQA
 See `format_text_prompt()` in `model-eval/scripts/sivqa_utils.py` 
 https://github.com/lyan62/foodie-eval/blob/76a22ee16fb58bb090c0ad3eb1f35e39fc71687e/model-eval/scripts/sivqa_utils.py#L30
