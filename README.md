@@ -97,7 +97,10 @@ notice that `food_categories: ["0"] is or ["1"] or your assigned group.
 https://drive.google.com/drive/folders/1m2BNy6IJFTQTFKXdt29RYaFNTl5x0VAI?usp=sharing
 
         - `sivqa_filtered.json` are the clean single-image questions
-        - `mivqa_filtered.json` are the multi-image questions.
+        - `mivqa_filtered_bi.json` are the multi-image questions.
+
+        **for both files, the question identifier is `qid`.**
+        
     - Images:
 Download the two zip files from [here](https://drive.google.com/drive/folders/1WFHN8oznqwAdeGXMGlxJbdCbi1l-zL0R?usp=sharing) to a local folder. Unzip and make sure the folder name is the same as the zip name. 
 

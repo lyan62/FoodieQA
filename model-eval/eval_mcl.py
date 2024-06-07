@@ -6,7 +6,7 @@ import transformers
 from PIL import Image
 import torch
 import os
-import utils
+from scripts import utils
 import argparse
 from tqdm import tqdm
 import random
@@ -22,14 +22,11 @@ def get_prompt(question, replace_token, template=0):
     if template == 0:
         prompt = f'<image0>{replace_token}, <image1>{replace_token}, <image2>{replace_token} <image3> {replace_token}\n'+ 'Answer the following question according to the provided four images, they corresponds to Option (A), Option (B), Option (C), Option (D). Choose one best answer from the given options. Question: {question}, your answer is: Option ('
     elif template == 1:
-        prompt = f'Answer the following question according to the provided four images which corresponds 
-        to Option (A), Option (B), Option (C), Option (D). Choose one best answer from the given options. The options are: <image0>{replace_token} Option (A)\n<image1>{replace_token} Option (B)\n, <image2>{replace_token} Option (C)\n<image3> {replace_token} Option (D)\nQuestion: {question}, your answer is: Option ('
+        prompt = f'Answer the following question according to the provided four images which corresponds to Option (A), Option (B), Option (C), Option (D). Choose one best answer from the given options. The options are: <image0>{replace_token} Option (A)\n<image1>{replace_token} Option (B)\n, <image2>{replace_token} Option (C)\n<image3> {replace_token} Option (D)\nQuestion: {question}, your answer is: Option ('
     elif template == 2:
-        prompt = f'Answer the following question according to the provided four images, 
-        and choose one best answer from the given options. The options are: <image0>{replace_token} Option (A)\n<image1>{replace_token} Option (B)\n, <image2>{replace_token} Option (C)\n<image3> {replace_token} Option (D)\nQuestion: {question}, your answer is: Option ('
+        prompt = f'Answer the following question according to the provided four images, and choose one best answer from the given options. The options are: <image0>{replace_token} Option (A)\n<image1>{replace_token} Option (B)\n, <image2>{replace_token} Option (C)\n<image3> {replace_token} Option (D)\nQuestion: {question}, your answer is: Option ('
     elif template ==3:
-        prompt = f"Human: Question {question} The options are: 
-                    Option (A)<image0>{replace_token}\n Option (B)<image1>{replace_token}\n Option (C)<image2>{replace_token}\n Option (D)<image3> {replace_token}\nAssistant: If I have to choose one best answer from the given options， the answer is：Option ("
+        prompt = f"Human: Question {question} The options are: Option (A)<image0>{replace_token}\n Option (B)<image1>{replace_token}\n Option (C)<image2>{replace_token}\n Option (D)<image3> {replace_token}\nAssistant: If I have to choose one best answer from the given options， the answer is：Option ("
     return prompt
 
 
@@ -66,10 +63,10 @@ def load_model():
     return model, processor, replace_token
 ## evaluate 0-shot
 
-def eval_question(mivqa, idx, model, processor, template=0):
+def eval_question(mivqa, idx, model, processor, replace_token, template=0):
     question = mivqa[idx]
     images = load_images(question)
-    prompt = get_prompt(question["question_bi"], template=template)
+    prompt = get_prompt(question["question_en"], replace_token, template=template)
     inputs = processor(images=images, text=prompt, return_tensors="pt")
 
     inputs['pixel_values'] = inputs['pixel_values'].to(torch.bfloat16)
@@ -125,7 +122,7 @@ if __name__ == "__main__":
     os.makedirs(out_dir, exist_ok=True)
     with open(os.path.join(out_dir, out_file_name), "w") as f:
         for i in tqdm(range(len(mivqa))):
-            res = eval_question(mivqa, i, model, processor, template=prompt)
+            res = eval_question(mivqa, i, model, processor, replace_token, template=prompt)
             f.write(json.dumps(res, ensure_ascii=False)+"\n")
                 
     # print("Saved model response to %s, Calculate accuracy"%out_file_name)
