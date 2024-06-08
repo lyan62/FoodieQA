@@ -27,6 +27,8 @@ def get_prompt(question, replace_token, template=0):
         prompt = f'Answer the following question according to the provided four images, and choose one best answer from the given options. The options are: <image0>{replace_token} Option (A)\n<image1>{replace_token} Option (B)\n, <image2>{replace_token} Option (C)\n<image3> {replace_token} Option (D)\nQuestion: {question}, your answer is: Option ('
     elif template ==3:
         prompt = f"Human: Question {question} The options are: Option (A)<image0>{replace_token}\n Option (B)<image1>{replace_token}\n Option (C)<image2>{replace_token}\n Option (D)<image3> {replace_token}\nAssistant: If I have to choose one best answer from the given options， the answer is：Option ("
+    else:
+        raise ValueError("Invalid template number")
     return prompt
 
 
@@ -96,7 +98,7 @@ if __name__ == "__main__":
     argparser.add_argument("--cache_dir", default="/scratch/project/dd-23-107/wenyan/cache")
     argparser.add_argument("--data_dir", default="/scratch/project/dd-23-107/wenyan/data/foodie")
     argparser.add_argument("--eval_file", default="mivqa_filtered.json")
-    argparser.add_argument("--prompt", default=0)
+    argparser.add_argument("--prompt", type=int, default=0)
     argparser.add_argument("--out_dir", default="/scratch/project/dd-23-107/wenyan/data/foodie/results/mivqa_res")
     argparser.add_argument("--model_name", default="qwen/Qwen-VL")
     
@@ -120,7 +122,7 @@ if __name__ == "__main__":
     
     out_file_name = "mivqa_mcl" + "_prompt" + str(prompt) + ".jsonl"
     os.makedirs(out_dir, exist_ok=True)
-    with open(os.path.join(out_dir, out_file_name), "w") as f:
+    with open(os.path.join(out_dir, out_file_name), "w", encoding='utf-8') as f:
         for i in tqdm(range(len(mivqa))):
             res = eval_question(mivqa, i, model, processor, replace_token, template=prompt)
             f.write(json.dumps(res, ensure_ascii=False)+"\n")

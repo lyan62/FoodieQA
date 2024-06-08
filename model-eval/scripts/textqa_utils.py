@@ -66,6 +66,21 @@ def get_prompt_qwen(question, template=0, lang="zh"):
 
     return messages
 
+def get_prompt_yi(question, template=0, lang="zh"):
+    # for qwen model
+    q, choices_str = format_question(question)
+
+    text_prompt = format_text_prompt(q, choices_str, template, lang=lang)
+    
+    if lang == "zh":
+        messages = [
+            {"role": "user", "content": text_prompt}
+            ] 
+    else:
+        raise NotImplementedError
+
+    return messages
+
 def get_prompt_idefics(question, data_dir, show_food_name=False, template=0, lang="zh"):
     # for both idefics2 and mantis
     q, img, choices_str = format_question(question, show_food_name)
