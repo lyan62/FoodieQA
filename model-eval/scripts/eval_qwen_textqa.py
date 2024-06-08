@@ -84,7 +84,7 @@ def main(args):
     print("Evaluating model on {} questions".format(len(textqa)))
     with open(os.path.join(out_dir, out_file_name), "w") as f:
         for idx in tqdm(range(len(textqa))):
-            res = evaluator.eval_question(textqa, idx, model, processor, data_dir, args)
+            res = evaluator.eval_question(textqa, idx, model, processor, args)
             f.write(json.dumps(res, ensure_ascii=False)+"\n")
             
     print("Saved model response to %s"%out_file_name)
@@ -99,8 +99,8 @@ if __name__ == "__main__":
     argparser = argparse.ArgumentParser()
     argparser.add_argument("--cache_dir", default="/scratch3/wenyan/cache")
     argparser.add_argument("--data_dir", default="/scratch3/wenyan/data/foodie")
-    argparser.add_argument("--eval_file", default="sivqa_filtered.json")
-    argparser.add_argument("--out_dir", default="/scratch3/wenyan/data/foodie/results")
+    argparser.add_argument("--eval_file", default="textqa_filtered.json")
+    argparser.add_argument("--out_dir", default="/scratch3/wenyan/data/foodie/results/textqa_res")
     argparser.add_argument("--model_name", default="qwen")
     argparser.add_argument("--show_food_name", action="store_true", default=False)
     argparser.add_argument("--template", type=int, default=0)

@@ -57,13 +57,12 @@ def get_prompt_qwen(question, template=0, lang="zh"):
 
     text_prompt = format_text_prompt(q, choices_str, template, lang=lang)
     
-    if isinstance(text_prompt, list):
-        if lang == "zh":
-            messages = [
-                {"role": "system", "content": "你是一个智能助手。"},
-                {"role": "user", "content": text_prompt.replace("你是一个智能助手，", "")}] # avoid repeating from the system prompt
-        else:
-            raise NotImplementedError
+    if lang == "zh":
+        messages = [
+            {"role": "system", "content": "你是一个智能助手。"},
+            {"role": "user", "content": text_prompt.replace("你是一个智能助手，", "")}] # avoid repeating from the system prompt
+    else:
+        raise NotImplementedError
 
     return messages
 
