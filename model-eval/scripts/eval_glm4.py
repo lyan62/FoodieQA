@@ -30,37 +30,38 @@ def build_input(mivqa, idx, data_dir, prompt=0, add_prompt_general=False):
         q = q.replace("以下", "以上")
         for i in range(4):
             image = Image.open(os.path.join(data_dir, question["images"][i])).convert('RGB')
-            messages.append({"role": "user", "image": image, "content": "图{}".format(chr(65+i))})
             if i == 3:
-             messages.append({"role": "user", "image": image, "content": "图{}\n".format(chr(65+i)) +"根据以上四张图回答问题，请从给定选项ABCD中选择一个最合适的答案。问题：{}, 答案为：图".format(q)})
-        
+                messages.append({"role": "user", "image": image, "content": "图{}\n".format(chr(65+i)) +"根据以上四张图回答问题，请从给定选项ABCD中选择一个最合适的答案。问题：{}, 答案为：图".format(q)})
+            else:
+                messages.append({"role": "user", "image": image, "content": "图{}".format(chr(65+i))})
     if prompt == 2:
         q = question["question"]
         q = q.replace("以下", "以上")
         messages.append({"role": "user", "content": "根据以下四张图回答问题，请从给定选项ABCD中选择一个最合适的答案。"})
         for i in range(4):
             image = Image.open(os.path.join(data_dir, question["images"][i])).convert('RGB')
-            messages.append({"role": "user", "image": image, "content": "图{}".format(chr(65+i))})
             if i ==3:
                 messages.append({"role": "user", "image": image, "content": "图{}\n".format(chr(65+i)) + "问题：{}, 答案为：图".format(q)})
-        
+            else:
+                messages.append({"role": "user", "image": image, "content": "图{}".format(chr(65+i))})
     if prompt == 3:
         q = question["question"]
         messages.append({"role": "user", "content": "Human: 问题{}，选项有: ".format(q)})
         for i in range(4):
             image = Image.open(os.path.join(data_dir, question["images"][i])).convert('RGB')
-            messages.append({"role": "user", "image": image, "content": "图{}".format(chr(65+i))})
-        messages.append({"role": "assistant", "content": "如果从给定选项ABCD中选择一个最合适的答案， 答案为：图"})
+            if i==3:
+                messages.append({"role": "assistant", "image": image, "content": "图{}\n".format(chr(65+i)) + "如果从给定选项ABCD中选择一个最合适的答案， 答案为：图"})
+            else:
+                messages.append({"role": "user", "image": image, "content": "图{}".format(chr(65+i))})
     return messages
         
         
 
 def eval_question(mivqa, idx, prompt, data_dir, add_prompt_general=False):
     messages = build_input(mivqa, idx, data_dir, prompt=prompt)
-    inputs = processor.apply_chat_template(messages, add_generation_prompt=True, tokenize=True, return_dict=True)
-    inputs = {k: v.to(model.device) for k, v in inputs.items()}
-    outputs = model.generate(**inputs, max_new_tokens=500)
-    generated_texts = processor.decode(outputs[:, inputs['input_ids'].shape[1]:], skip_special_tokens=True)
+    inputs = processor.apply_chat_template(messages, add_generation_prompt=True, tokenize=True, return_tensors='pt')
+    outputs = model.generate(inputs.to('cuda'), max_new_tokens=500)
+    generated_texts = processor.decode(outputs[0][inputs.shape[-1]:], skip_special_tokens=True)
     return {
         "response": generated_texts[0],
         "qid": mivqa[idx]["qid"]

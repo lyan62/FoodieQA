@@ -138,7 +138,7 @@ def main(args):
     out_dir = args.out_dir
     
     sivqa = sivqa_utils.read_sivqa(data_dir)
-    out_file_name = "sivqa_" + args.model-path.split("/")[-1] + "_prompt" + str(template) + ".jsonl"
+    out_file_name = "sivqa_" + args.model_path.split("/")[-1] + "_prompt" + str(template) + ".jsonl"
     os.makedirs(out_dir, exist_ok=True)
     
     ## eval
@@ -160,7 +160,7 @@ def main(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--model-path", type=str, default="/scratch/project/dd-23-107/wenyan/data/foodie/models/Yi-VL-6B")
+    parser.add_argument("--model_path", type=str, default="/scratch/project/dd-23-107/wenyan/data/foodie/models/Yi-VL-6B")
     parser.add_argument("--model-base", type=str, default=None)
     parser.add_argument("--conv-mode", type=str, default="mm_default")
     parser.add_argument("--temperature", type=float, default=0.2)
@@ -168,7 +168,7 @@ if __name__ == "__main__":
     parser.add_argument("--num_beams", type=int, default=1)
     parser.add_argument("--data_dir", default="/scratch/project/dd-23-107/wenyan/data/foodie")
     parser.add_argument("--eval_file", default="sivqa_filtered.json")
-    parser.add_argument("--out_dir", default="/scratch/project/dd-23-107/wenyan/data/foodie/results")
+    parser.add_argument("--out_dir", default="/scratch/project/dd-23-107/wenyan/data/foodie/results/mivqa_show_food_name")
     parser.add_argument("--show_food_name", action="store_true", default=False)
     parser.add_argument("--template", type=int, default=0)
     parser.add_argument("--lang", default="zh")
