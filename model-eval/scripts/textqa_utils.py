@@ -66,6 +66,28 @@ def get_prompt_qwen(question, template=0, lang="zh"):
 
     return messages
 
+def get_prompt_mistral(question, template=0, lang="zh"):
+    # for qwen model
+    q, choices_str = format_question(question)
+
+    text_prompt = format_text_prompt(q, choices_str, template, lang=lang)
+    
+    if lang == "zh":
+        if template ==2 or template ==3:
+            text_prompt_list = text_prompt.split("智能助手：")
+            messages = [
+                {"role": "user", "content": text_prompt[0]},
+                {"role": "assistant", "content": text_prompt[1]}
+                ] 
+        else:
+            messages = [
+                {"role": "user", "content": text_prompt}
+                ] 
+    else:
+        raise NotImplementedError
+
+    return messages
+
 def get_prompt_yi(question, template=0, lang="zh"):
     # for qwen model
     q, choices_str = format_question(question)

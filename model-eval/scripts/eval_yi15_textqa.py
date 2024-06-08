@@ -23,9 +23,10 @@ class Evaluator(object):
         model = AutoModelForCausalLM.from_pretrained(
             self.model_name,
             torch_dtype="auto",
-            device_map="auto"
+            device_map="auto",
+            cache_dir=os.environ["HF_HOME"]
         ).eval()
-        processor = AutoTokenizer.from_pretrained(self.model_name, use_fast=True)
+        processor = AutoTokenizer.from_pretrained(self.model_name, use_fast=True, cache_dir=os.environ["HF_HOME"])
         return model, processor
     
     def eval_question(self, textqa, idx, model, processor, args):
