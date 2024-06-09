@@ -7,7 +7,7 @@ import os
 import json
 from tqdm import tqdm 
 
-from transformers import AutoModelForCausalLM 
+from transformers import AutoModelForCausalLM, AutoTokenizer
 from transformers import AutoProcessor, AutoModelForVision2Seq
 from transformers.image_utils import load_image
 
@@ -215,7 +215,8 @@ class Evaluator(object):
             messages = get_prompt_qwen(question, data_dir, 
                                     template=args.template,
                                     lang=args.lang)
-            inputs = processor(messages, return_tensors='pt')
+            query = processor.from_list_format(messages)
+            inputs = processor(query, return_tensors='pt')
             inputs = inputs.to(model.device)
         
         generation_args = { 
