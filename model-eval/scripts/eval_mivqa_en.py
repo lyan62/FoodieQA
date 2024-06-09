@@ -16,6 +16,39 @@ import utils
 import argparse
 from tqdm import tqdm 
 
+def get_prompt_qwen(question, data_dir, show_food_name=False, template=0, lang="zh"):
+    # for qwen model
+    if lang == "en":
+        q = question["question_en"]
+        if template == 0:
+            messages = [{"image": os.path.join(data_dir, image)} for image in question["images"]]
+            messages.append({"text": "Answer the following question according to the provided four images which corresponds to Option (A), Option (B), Option (C), Option (D). Choose one best answer from the given options. Question: {}, your answer is: Option (".format(q)})
+               
+        if template == 1:
+            messages = [ 
+                {"text": "Answer the following question according to the provided four images, which corresponds to Option (A), Option (B), Option (C), Option (D). Choose one best answer from the given options."}, 
+                {"image": os.path.join(question["images"][0])}, {"text": "Option (A)\n"},
+                {"image": os.path.join(question["images"][1])}, {"text": "Option (B)\n"},
+                {"image": os.path.join(question["images"][2])}, {"text": "Option (C)\n"},
+                {"image": os.path.join(question["images"][3])}, {"text": "Option (D)\n"},
+                {"text": "Question: {}, your answer is: Option (".format(q)}]
+        if template == 2:
+            messages = [{"text": "Answer the following question according to the provided four images, and choose one best answer from the given options."},
+                            {"image": os.path.join(question["images"][0])}, {"text": "Option (A)\n"},
+                            {"image": os.path.join(question["images"][1])}, {"text": "Option (B)\n"},
+                            {"image": os.path.join(question["images"][2])}, {"text": "Option (C)\n"},
+                            {"image": os.path.join(question["images"][3])}, {"text": "Option (D)\n"},
+                            {"text": "Question: {}, your answer is: Option (".format(q)}]
+        if template == 3:
+            messages = [{"type": "text", "text": "Question{} The options are: \n".format(q)},
+                        {"text": "Option (A)\n"}, {"image": os.path.join(question["images"][0])},
+                        {"text": "Option (B)\n"}, {"image": os.path.join(question["images"][1])},
+                        {"text": "Option (C)\n"}, {"image": os.path.join(question["images"][2])},
+                        {"text": "Option (D)\n"}, {"image": os.path.join(question["images"][3])}]
+        return messages
+        
+    
+
 def get_prompt_idefics2(question, data_dir, template=0, lang="zh"):
     if lang == "en":
         q = question["question_en"]
@@ -152,6 +185,11 @@ class Evaluator(object):
                 self.model_name, cache_dir=os.environ["HF_HOME"], 
                 device_map="auto", torch_dtype=torch.float16
                 )    
+        if self.model_name == "Qwen/Qwen-VL":
+            model = AutoModelForCausalLM.from_pretrained(self.model_name, device_map="auto", cache_dir=os.environ["HF_HOME"],  
+                                                         trust_remote_code=True, fp16=True).eval()
+            processor = AutoTokenizer.from_pretrained(self.model_name, cache_dir=os.environ["HF_HOME"], trust_remote_code=True)
+            
         return model, processor
     
     def eval_question(self, mivqa, idx, model, processor, data_dir, args):
@@ -172,6 +210,13 @@ class Evaluator(object):
         
             prompt = processor.tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
             inputs = processor(prompt, images, return_tensors="pt").to(model.device)
+            
+        elif self.model_name == "Qwen/Qwen-VL":
+            messages = get_prompt_qwen(question, data_dir, 
+                                    template=args.template,
+                                    lang=args.lang)
+            inputs = processor(messages, return_tensors='pt')
+            inputs = inputs.to(model.device)
         
         generation_args = { 
             "max_new_tokens": 500, 
