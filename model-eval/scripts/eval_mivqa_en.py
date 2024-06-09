@@ -8,7 +8,8 @@ import json
 from tqdm import tqdm 
 
 from transformers import AutoModelForCausalLM 
-from transformers import AutoProcessor 
+from transformers import AutoProcessor, AutoModelForVision2Seq
+from transformers.image_utils import load_image
 
 import sivqa_utils
 import utils
@@ -50,12 +51,17 @@ def get_prompt_idefics2(question, data_dir, template=0, lang="zh"):
         if template == 3:
             messages = [ 
                 {"role": "user", 
-                "content": "Question{} The options are: Option (A)<|image_1|>\nOption (B)<|image_2|>\nOption (C)<|image_3|>\nOption (D)<|image_4|>\n".format(q)
+                "content": [{"type": "text", "text": "Question{} The options are: \n".format(q)},
+                            {"type": "text", "text": "Option (A)\n"}, {"type": "image"},
+                            {"type": "text", "text": "Option (B)\n"}, {"type": "image"},
+                            {"type": "text", "text": "Option (C)\n"}, {"type": "image"},
+                            {"type": "text", "text": "Option (D)\n"}, {"type": "image"}]
                 },
                 {"role": "assistant", 
                 "content": "If I have to choose one best answer from the given options， the answer is：Option ("}
             ]
-        return messages
+        images = [load_image(os.path.join(data_dir, x)) for x in question["images"]]
+        return messages, images
     
     
 
@@ -137,25 +143,35 @@ class Evaluator(object):
             processor = AutoProcessor.from_pretrained(self.model_name, trust_remote_code=True,cache_dir=os.environ["HF_HOME"],) 
         
         # idefics2 model
-        if self.model_name == "HuggingFaceM4/idefics2-8b":
-            processor = AutoProcessor.from_pretrained(model_name, 
+        if self.model_name == "HuggingFaceM4/idefics2-8b" or self.model_name == "TIGER-Lab/Mantis-8B-Idefics2":
+            processor = AutoProcessor.from_pretrained(self.model_name, 
                                                     cache_dir=os.environ["HF_HOME"], 
                                                     do_image_splitting=False
                                                     )
             model = AutoModelForVision2Seq.from_pretrained(
-                model_name, cache_dir=os.environ["HF_HOME"], 
+                self.model_name, cache_dir=os.environ["HF_HOME"], 
                 device_map="auto", torch_dtype=torch.float16
                 )    
         return model, processor
     
     def eval_question(self, mivqa, idx, model, processor, data_dir, args):
         question = mivqa[idx]
-        messages = get_prompt_phi(question, data_dir, 
-                                template=args.template,
-                                lang=args.lang)
-        images = [Image.open(os.path.join(data_dir, x)) for x in question["images"]] 
-        prompt = processor.tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
-        inputs = processor(prompt, images, return_tensors="pt").to(model.device)
+        if self.model_name == "HuggingFaceM4/idefics2-8b" or self.model_name == "TIGER-Lab/Mantis-8B-Idefics2":
+            messages, images = get_prompt_idefics2(question, data_dir, 
+                                                    template=args.template,
+                                                    lang=args.lang)
+            prompt = processor.apply_chat_template(messages, add_generation_prompt=True)
+            inputs = processor(text=prompt, images=images, return_tensors="pt")
+            inputs = {k: v.to(model.device) for k, v in inputs.items()}
+
+        elif self.model_name == "microsoft/Phi-3-vision-128k-instruct":
+            messages = get_prompt_phi(question, data_dir, 
+                                    template=args.template,
+                                    lang=args.lang)
+            images = [Image.open(os.path.join(data_dir, x)) for x in question["images"]] 
+        
+            prompt = processor.tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
+            inputs = processor(prompt, images, return_tensors="pt").to(model.device)
         
         generation_args = { 
             "max_new_tokens": 500, 
