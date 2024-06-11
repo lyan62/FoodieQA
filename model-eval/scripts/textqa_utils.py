@@ -57,13 +57,49 @@ def get_prompt_qwen(question, template=0, lang="zh"):
 
     text_prompt = format_text_prompt(q, choices_str, template, lang=lang)
     
-    if isinstance(text_prompt, list):
-        if lang == "zh":
+    if lang == "zh":
+        messages = [
+            {"role": "system", "content": "你是一个智能助手。"},
+            {"role": "user", "content": text_prompt.replace("你是一个智能助手，", "")}] # avoid repeating from the system prompt
+    else:
+        raise NotImplementedError
+
+    return messages
+
+def get_prompt_mistral(question, template=0, lang="zh"):
+    # for qwen model
+    q, choices_str = format_question(question)
+
+    text_prompt = format_text_prompt(q, choices_str, template, lang=lang)
+    
+    if lang == "zh":
+        if template ==2 or template ==3:
+            text_prompt_list = text_prompt.split("智能助手：")
             messages = [
-                {"role": "system", "content": "你是一个智能助手。"},
-                {"role": "user", "content": text_prompt.replace("你是一个智能助手，", "")}] # avoid repeating from the system prompt
+                {"role": "user", "content": text_prompt[0]},
+                {"role": "assistant", "content": text_prompt[1]}
+                ] 
         else:
-            raise NotImplementedError
+            messages = [
+                {"role": "user", "content": text_prompt}
+                ] 
+    else:
+        raise NotImplementedError
+
+    return messages
+
+def get_prompt_yi(question, template=0, lang="zh"):
+    # for qwen model
+    q, choices_str = format_question(question)
+
+    text_prompt = format_text_prompt(q, choices_str, template, lang=lang)
+    
+    if lang == "zh":
+        messages = [
+            {"role": "user", "content": text_prompt}
+            ] 
+    else:
+        raise NotImplementedError
 
     return messages
 

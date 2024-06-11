@@ -21,42 +21,28 @@ class Evaluator(object):
     
     def _load_model(self):
         model = AutoModelForCausalLM.from_pretrained(
-            "Qwen/Qwen2-7B-Instruct",
+            self.model_name,
             torch_dtype="auto",
-            device_map="auto"
-        )
-        processor = AutoTokenizer.from_pretrained("Qwen/Qwen2-7B-Instruct")
+            device_map="auto",
+            cache_dir=os.environ["HF_HOME"]
+        ).eval()
+        processor = AutoTokenizer.from_pretrained(self.model_name, use_fast=True, cache_dir=os.environ["HF_HOME"])
         return model, processor
     
     def eval_question(self, textqa, idx, model, processor, args):
         question = textqa[idx]
-        query_list = textqa_utils.get_prompt_qwen(question, template=args.template, lang=args.lang)
+        query_list = textqa_utils.get_prompt_yi(question, template=args.template, lang=args.lang)
         
-        text = processor.apply_chat_template(
-            query_list,
-            tokenize=False,
-            add_generation_prompt=True
-        )
-        model_inputs = processor([text], return_tensors="pt").to("cuda")
-
-        generated_ids = model.generate(
-            model_inputs.input_ids,
-            max_new_tokens=512
-        )
-        generated_ids = [
-            output_ids[len(input_ids):] for input_ids, output_ids in zip(model_inputs.input_ids, generated_ids)
-        ]
-
-        response = processor.batch_decode(generated_ids, skip_special_tokens=True)[0]
-        
+        input_ids = processor.apply_chat_template(conversation=query_list, tokenize=True, return_tensors='pt')
+        output_ids = model.generate(input_ids.to('cuda'), 
+                                    eos_token_id=processor.eos_token_id,
+                                    max_new_tokens=512)
+        response = processor.decode(output_ids[0][input_ids.shape[1]:], skip_special_tokens=True)
         return {
             "response": response,
             "qid": textqa[idx]["qid"]
         }
             
-
-
-
 def main(args):
     # load model and processor
     evaluator = Evaluator(args)
@@ -72,12 +58,8 @@ def main(args):
     
     textqa = textqa_utils.read_textqa(data_dir)
     
-    if "Mantis" in args.model_name:
-        out_file_name = "textqa_" + 'mantis' + "_prompt" + str(template) + ".jsonl"
-    elif "qwen" in args.model_name:
-        out_file_name = "textqa_" + 'qwen' + "_prompt" + str(template) + ".jsonl"
-    else:
-        out_file_name = "textqa_" + 'idefics' + "_prompt" + str(template) + ".jsonl"
+    
+    out_file_name = "textqa_" + args.model_name.split("/")[-1] + "_prompt" + str(template) + ".jsonl"
     os.makedirs(out_dir, exist_ok=True)
     
     ## eval
@@ -101,7 +83,7 @@ if __name__ == "__main__":
     argparser.add_argument("--data_dir", default="/scratch3/wenyan/data/foodie")
     argparser.add_argument("--eval_file", default="textqa_filtered.json")
     argparser.add_argument("--out_dir", default="/scratch3/wenyan/data/foodie/results/textqa_res")
-    argparser.add_argument("--model_name", default="qwen")
+    argparser.add_argument("--model_name", default="01-ai/Yi-1.5-9B")
     argparser.add_argument("--show_food_name", action="store_true", default=False)
     argparser.add_argument("--template", type=int, default=0)
     argparser.add_argument("--lang", default="zh")

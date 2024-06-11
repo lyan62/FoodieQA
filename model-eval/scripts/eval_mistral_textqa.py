@@ -20,43 +20,35 @@ class Evaluator(object):
         self.model_name = args.model_name
     
     def _load_model(self):
+        
+        processor = AutoTokenizer.from_pretrained(self.model_name, cache_dir=os.environ["HF_HOME"])
         model = AutoModelForCausalLM.from_pretrained(
-            "Qwen/Qwen2-7B-Instruct",
-            torch_dtype="auto",
-            device_map="auto"
+            self.model_name,
+            torch_dtype=torch.bfloat16,
+            device_map="auto",
+            cache_dir=os.environ["HF_HOME"]
         )
-        processor = AutoTokenizer.from_pretrained("Qwen/Qwen2-7B-Instruct")
         return model, processor
     
     def eval_question(self, textqa, idx, model, processor, args):
         question = textqa[idx]
-        query_list = textqa_utils.get_prompt_qwen(question, template=args.template, lang=args.lang)
+        # this is in the same style as qwen model
+        query_list = textqa_utils.get_prompt_mistral(question, template=args.template, lang=args.lang)
         
-        text = processor.apply_chat_template(
+        input_ids = processor.apply_chat_template(
             query_list,
-            tokenize=False,
-            add_generation_prompt=True
-        )
-        model_inputs = processor([text], return_tensors="pt").to("cuda")
+            add_generation_prompt=True,
+            return_tensors="pt")
 
-        generated_ids = model.generate(
-            model_inputs.input_ids,
-            max_new_tokens=512
-        )
-        generated_ids = [
-            output_ids[len(input_ids):] for input_ids, output_ids in zip(model_inputs.input_ids, generated_ids)
-        ]
-
-        response = processor.batch_decode(generated_ids, skip_special_tokens=True)[0]
-        
+        outputs = model.generate(input_ids.to(model.device), 
+                                    eos_token_id=processor.eos_token_id,
+                                    max_new_tokens=256)
+        response = processor.decode(outputs[0], skip_special_tokens=True)
         return {
             "response": response,
             "qid": textqa[idx]["qid"]
         }
             
-
-
-
 def main(args):
     # load model and processor
     evaluator = Evaluator(args)
@@ -72,12 +64,8 @@ def main(args):
     
     textqa = textqa_utils.read_textqa(data_dir)
     
-    if "Mantis" in args.model_name:
-        out_file_name = "textqa_" + 'mantis' + "_prompt" + str(template) + ".jsonl"
-    elif "qwen" in args.model_name:
-        out_file_name = "textqa_" + 'qwen' + "_prompt" + str(template) + ".jsonl"
-    else:
-        out_file_name = "textqa_" + 'idefics' + "_prompt" + str(template) + ".jsonl"
+    
+    out_file_name = "textqa_" + args.model_name.split("/")[-1] + "_prompt" + str(template) + ".jsonl"
     os.makedirs(out_dir, exist_ok=True)
     
     ## eval
@@ -101,7 +89,7 @@ if __name__ == "__main__":
     argparser.add_argument("--data_dir", default="/scratch3/wenyan/data/foodie")
     argparser.add_argument("--eval_file", default="textqa_filtered.json")
     argparser.add_argument("--out_dir", default="/scratch3/wenyan/data/foodie/results/textqa_res")
-    argparser.add_argument("--model_name", default="qwen")
+    argparser.add_argument("--model_name", default="mistralai/Mixtral-8x7B-Instruct-v0.1")  # shenzhi-wang/Llama3-8B-Chinese-Chat#meta-llama/Llama-2-70b, meta-llama/Meta-Llama-3-8B-Instruct
     argparser.add_argument("--show_food_name", action="store_true", default=False)
     argparser.add_argument("--template", type=int, default=0)
     argparser.add_argument("--lang", default="zh")
