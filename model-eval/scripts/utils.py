@@ -21,7 +21,12 @@ def parse_mantis(res):
         "C":"2",
         "D":"3"
     }
-    return ans2idx[ans.upper()]
+    # fallback to random
+    if ans not in ans2idx.keys():
+        print("Can not parse response, falling back to random...")
+        return random.choice(list(ans2idx.values()))
+    else:
+        return ans2idx[ans.upper()]
 
 def parse_idefics(res):
     ans = res["response"][0].split("\nAssistant: ")[1].split("图")[1][0]
@@ -31,6 +36,10 @@ def parse_idefics(res):
         "C":"2",
         "D":"3"
     }
+    # fallback to random
+    if ans not in ans2idx:
+        print("Can not parse response, falling back to random...")
+        return random.choice(list(ans2idx.values()))
     return ans2idx[ans.upper()]
 
 def parse_idefics_sivqa(res, template):
