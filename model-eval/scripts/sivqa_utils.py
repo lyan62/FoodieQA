@@ -4,7 +4,7 @@ import os
 
 
 def read_sivqa(data_dir):
-    question_file = os.path.join(data_dir, "sivqa_filtered.json")
+    question_file = os.path.join(data_dir, "sivqa_filtered_bi.json")
     with open(question_file, 'r', encoding='utf-8') as f:
         sivqa = json.load(f)
     return sivqa
@@ -16,12 +16,17 @@ def format_choices(choices, template=0):
         choices_str += "（{}) {}\n".format(idx2choice[idx], choice.strip())
     return choices_str
 
-def format_question(question, show_food_name=False):
-    q = question["question"].strip()
+def format_question(question, lang="zh", show_food_name=False):
+    if lang == "zh":
+        q = question["question"].strip()
+        choices = question["choices"]
+    else:
+        q = question["question_en"].strip()
+        choices = question["choices_en"]
+    
     if show_food_name:
         q = q.replace("图片中的食物", question["food_name"])
     img = question["food_meta"]["food_file"]
-    choices = question["choices"]
     
     choices_str = format_choices(choices)
     
@@ -56,7 +61,7 @@ def format_text_prompt(q, choices_str, template=0, lang="zh"):
 
 def get_prompt_qwen(question, data_dir, show_food_name=False, template=0, lang="zh"):
     # for qwen model
-    q, img, choices_str = format_question(question, show_food_name)
+    q, img, choices_str = format_question(question, lang=lang, show_food_name=show_food_name)
 
     query_list = [{"image": os.path.join(data_dir, img)}]
     text_prompt = format_text_prompt(q, choices_str, template, lang=lang)
@@ -66,9 +71,24 @@ def get_prompt_qwen(question, data_dir, show_food_name=False, template=0, lang="
         else:
             query_list.append({"text": "Human: "+ text_prompt[0] + "Assistant: "+ text_prompt[1]})
     else:
-        query_list.append({"text": format_text_prompt(q, choices_str, template)})
+        query_list.append({"text": format_text_prompt(q, choices_str, template, lang=lang)})
 
     return query_list
+
+def get_prompt_phi(question, data_dir, show_food_name=False, template=0, lang="zh"):
+    # for qwen model
+    q, img, choices_str = format_question(question, lang=lang, show_food_name=show_food_name)
+
+    text_prompt = format_text_prompt(q, choices_str, template, lang=lang)
+    query_list = []
+    if isinstance(text_prompt, list):
+        query_list.append({"role": "user", "content": "<|image_1|>\n" + text_prompt[0]})
+        query_list.append({"role": "assistant", "content": text_prompt[1]})
+    else:
+        query_list.append({"role": "user", "content": "<|image_1|>\n" + text_prompt})
+
+    return query_list
+
 
 def get_prompt_idefics(question, data_dir, show_food_name=False, template=0, lang="zh"):
     # for both idefics2 and mantis
