@@ -100,6 +100,12 @@ def get_accuracy(result_file, mivqa, parse_fn=parse_idefics):
     accuracy = accuracy_score(all_answers, gt)
     print("accuracy is: ", accuracy)
     return accuracy
-        
+
+
+generation_args = { 
+            "max_new_tokens": 500, 
+            "temperature": 0.0, 
+            "do_sample": False, 
+        } 
     
     
