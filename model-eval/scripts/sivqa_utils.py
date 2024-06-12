@@ -92,7 +92,7 @@ def get_prompt_phi(question, data_dir, show_food_name=False, template=0, lang="z
 
 def get_prompt_idefics(question, data_dir, show_food_name=False, template=0, lang="zh"):
     # for both idefics2 and mantis
-    q, img, choices_str = format_question(question, show_food_name)
+    q, img, choices_str = format_question(question, lang=lang, show_food_name=show_food_name)
     text_prompt = format_text_prompt(q, choices_str, template, lang=lang)
     if isinstance(text_prompt, list):
         query_list = [
@@ -120,3 +120,5 @@ def get_prompt_idefics(question, data_dir, show_food_name=False, template=0, lan
                             ]}
                         ]
     return query_list
+
+
