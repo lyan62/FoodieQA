@@ -31,7 +31,7 @@ class Evaluator(object):
     
     def eval_question(self, textqa, idx, model, processor, args):
         question = textqa[idx]
-        query_list = textqa_utils.get_prompt_yi(question, template=args.template, lang=args.lang)
+        query_list = textqa_utils.get_prompt_mistral(question, template=args.template, lang=args.lang)
         
         input_ids = processor.apply_chat_template(conversation=query_list, tokenize=True, return_tensors='pt')
         output_ids = model.generate(input_ids.to('cuda'), 

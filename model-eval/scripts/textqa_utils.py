@@ -16,13 +16,21 @@ def format_choices(choices, template=0):
         choices_str += "（{}) {}\n".format(idx2choice[idx], choice.strip())
     return choices_str
 
-def format_question(question):
-    q = question["question"].strip()
-    choices = question["choices"]
+def format_question(question, lang="zh", show_food_name=False):
+    if lang == "zh":
+        q = question["question"].strip()
+        choices = question["choices"]
+    else:
+        q = question["question_en"].strip()
+        choices = question["choices_en"]
+    
+    if show_food_name:
+        q = q.replace("图片中的食物", question["food_name"])
+    img = question["food_meta"]["food_file"]
     
     choices_str = format_choices(choices)
     
-    return q, choices_str
+    return q, img, choices_str
 
 def format_text_prompt(q, choices_str, template=0, lang="zh"):
     if lang == "zh":
@@ -76,8 +84,8 @@ def get_prompt_mistral(question, template=0, lang="zh"):
         if template ==2 or template ==3:
             text_prompt_list = text_prompt.split("智能助手：")
             messages = [
-                {"role": "user", "content": text_prompt[0]},
-                {"role": "assistant", "content": text_prompt[1]}
+                {"role": "user", "content": text_prompt_list[0]},
+                {"role": "assistant", "content": text_prompt_list[1]}
                 ] 
         else:
             messages = [
@@ -105,21 +113,21 @@ def get_prompt_yi(question, template=0, lang="zh"):
 
 def get_prompt_idefics(question, data_dir, show_food_name=False, template=0, lang="zh"):
     # for both idefics2 and mantis
-    q, img, choices_str = format_question(question, show_food_name)
+    q, img, choices_str = format_question(question, show_food_name=show_food_name, lang=args.lang)
     text_prompt = format_text_prompt(q, choices_str, template, lang=lang)
-    if isinstance(text_prompt, list):
+    if template ==2 or template ==3:
+        text_prompt_list = text_prompt.split("智能助手：")
         query_list = [
                     {
                         "role": "user",
                         "content": [
-                            {"type": "image", "image": os.path.join(data_dir, img)},
-                            {"type": "text", "text": text_prompt[0]}
+                            {"type": "text", "text": text_prompt_list[0]}
                         ]
                     },
                     {
                         "role": "assistant",
                         "content": [
-                            {"type": "text", "text": text_prompt[1]}
+                            {"type": "text", "text": text_prompt_list[1]}
                         ]
                     }
                 ]
@@ -128,7 +136,6 @@ def get_prompt_idefics(question, data_dir, show_food_name=False, template=0, lan
                         {
                             "role": "user",
                             "content": [
-                                {"type": "image"},
                                 {"type": "text", "text": text_prompt},
                             ]}
                         ]
