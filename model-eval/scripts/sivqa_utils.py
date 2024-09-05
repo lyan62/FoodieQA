@@ -27,8 +27,8 @@ def format_question(question, lang="zh", show_food_name=False, use_web_img=False
     if show_food_name:
         q = q.replace("图片中的食物", question["food_name"])
     
-    if use_web_img and "web_img" in question["food_meta"]:
-        img = question["food_meta"]["web_img"]
+    if use_web_img and "web_file" in question["food_meta"]:
+        img = question["food_meta"]["web_file"]
     else:
         img = question["food_meta"]["food_file"]
     
