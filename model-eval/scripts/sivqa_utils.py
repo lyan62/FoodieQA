@@ -16,7 +16,7 @@ def format_choices(choices, template=0):
         choices_str += "（{}) {}\n".format(idx2choice[idx], choice.strip())
     return choices_str
 
-def format_question(question, lang="zh", show_food_name=False):
+def format_question(question, lang="zh", show_food_name=False, use_web_img=False):
     if lang == "zh":
         q = question["question"].strip()
         choices = question["choices"]
@@ -26,7 +26,11 @@ def format_question(question, lang="zh", show_food_name=False):
     
     if show_food_name:
         q = q.replace("图片中的食物", question["food_name"])
-    img = question["food_meta"]["food_file"]
+    
+    if use_web_img and "web_img" in question["food_meta"]:
+        img = question["food_meta"]["web_img"]
+    else:
+        img = question["food_meta"]["food_file"]
     
     choices_str = format_choices(choices)
     
@@ -59,9 +63,9 @@ def format_text_prompt(q, choices_str, template=0, lang="zh"):
             # return "Human: {} These are the options: {} Please select one of the options as your answer. Assistant: I would select (".format(q, choices_str)
         
 
-def get_prompt_qwen(question, data_dir, show_food_name=False, template=0, lang="zh"):
+def get_prompt_qwen(question, data_dir, show_food_name=False, use_web_img=False, template=0, lang="zh"):
     # for qwen model
-    q, img, choices_str = format_question(question, lang=lang, show_food_name=show_food_name)
+    q, img, choices_str = format_question(question, lang=lang, show_food_name=show_food_name, use_web_img=use_web_img)
 
     query_list = [{"image": os.path.join(data_dir, img)}]
     text_prompt = format_text_prompt(q, choices_str, template, lang=lang)

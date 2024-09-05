@@ -36,7 +36,8 @@ class Evaluator(object):
     def eval_question(self, sivqa, idx, model, processor, data_dir, args):
         question = sivqa[idx]
         query_list = sivqa_utils.get_prompt_qwen(question, data_dir, 
-                                                    show_food_name=args.show_food_name, 
+                                                    show_food_name=args.show_food_name,
+                                                    use_web_img=args.use_web_img, 
                                                     template=args.template,
                                                     lang=args.lang)
         
@@ -101,6 +102,7 @@ if __name__ == "__main__":
     argparser.add_argument("--show_food_name", action="store_true", default=False)
     argparser.add_argument("--template", type=int, default=0)
     argparser.add_argument("--lang", default="zh")
+    argparser.add_argument("--use_web_img", action="store_true", default=False)
     
     args = argparser.parse_args()
 

@@ -44,7 +44,12 @@ class Evaluator(object):
                                                         template=args.template,
                                                         lang=args.lang)
             print(messages)
-            images = [load_image(os.path.join(data_dir, question["food_meta"]["food_file"]))]
+            if args.use_web_img and "web_file" in question["food_meta"]:
+                img_file = question["food_meta"]["web_file"]
+            else:
+                img_file = question["food_meta"]["food_file"]
+            
+            images = [load_image(os.path.join(data_dir, img_file))]
             prompt = processor.apply_chat_template(messages, add_generation_prompt=True)
             inputs = processor(text=prompt, images=images, return_tensors="pt")
             
@@ -105,6 +110,7 @@ if __name__ == "__main__":
     argparser.add_argument("--hide_img", action="store_true", default=False)
     argparser.add_argument("--template", type=int, default=0)
     argparser.add_argument("--lang", type=str, default="zh")
+    argparser.add_argument("--use_web_img", action="store_true", default=False)
     
     args = argparser.parse_args()
 
