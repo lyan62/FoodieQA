@@ -4,7 +4,7 @@ Evaluate LLMs/VLMs with the FoodieQA benchmark
 
 ## Benchmark
 
-![](foodieQA-img.png)
+![](foodie-img.jpeg)
 
 🤗 Available on HuggingFace [lyan62/FoodieQA](https://huggingface.co/datasets/lyan62/FoodieQA)
 
