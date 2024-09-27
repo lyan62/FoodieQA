@@ -52,5 +52,5 @@
 
     python app.py
     ```
-- Use the UI as the in the ![annotaion-guide](ui/annotation-guide.png)
-Allow choices to the answers to be non-images, **add choices split by comma ","**, see example as in ![following](ui/annotation-guide-choices.png). The "choices" field is optional.
+- Use the UI as the in the ![annotaion-guide](annotation-guide.png)
+Allow choices to the answers to be non-images, **add choices split by comma ","**, see example as in ![following](annotation-guide-choices.png). The "choices" field is optional.
