@@ -2,6 +2,13 @@
 
 Evaluate LLMs/VLMs with the FoodieQA benchmark
 
+## Benchmark
+
+![](foodieQA-img.png)
+
+🤗 Available on HuggingFace [lyan62/FoodieQA](https://huggingface.co/datasets/lyan62/FoodieQA)
+
+License: [CC-BY-NC-ND 4.0](https://creativecommons.org/licenses/by-nc-nd/4.0/deed.en)
 
 ## Models
 ### LLMs
