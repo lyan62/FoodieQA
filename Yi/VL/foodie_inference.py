@@ -17,7 +17,7 @@ import json
 
 
 import sys
-sys.path.append("/scratch/project/dd-23-107/wenyan/foodie-eval/model-eval")
+sys.path.append("/ceph/hpc/data/d2024d05-018-users/wenyan/code/foodie-eval/model-eval")
 
 from scripts import sivqa_utils
 
@@ -61,7 +61,8 @@ class Evaluator(object):
     
         question = sivqa[idx]
 
-        q, image_file, choices_str = sivqa_utils.format_question(question, show_food_name=args.show_food_name)
+        q, image_file, choices_str = sivqa_utils.format_question(question, show_food_name=args.show_food_name, 
+                                                                 use_web_img=args.use_web_img)
         text_prompt = sivqa_utils.format_text_prompt(q, choices_str, template=args.template, lang=args.lang)
         conv = self.format_prompt(text_prompt, args)
         prompt = conv.get_prompt()
@@ -137,7 +138,7 @@ def main(args):
     template = args.template
     out_dir = args.out_dir
     
-    sivqa = sivqa_utils.read_sivqa(data_dir)
+    sivqa = sivqa_utils.read_sivqa(data_dir, args.eval_file)
     out_file_name = "sivqa_" + args.model_path.split("/")[-1] + "_prompt" + str(template) + ".jsonl"
     os.makedirs(out_dir, exist_ok=True)
     
@@ -166,10 +167,11 @@ if __name__ == "__main__":
     parser.add_argument("--temperature", type=float, default=0.2)
     parser.add_argument("--top_p", type=float, default=None)
     parser.add_argument("--num_beams", type=int, default=1)
-    parser.add_argument("--data_dir", default="/scratch/project/dd-23-107/wenyan/data/foodie")
+    parser.add_argument("--data_dir", default="/ceph/hpc/data/d2024d05-018-users/wenyan/data/foodie")
     parser.add_argument("--eval_file", default="sivqa_filtered.json")
     parser.add_argument("--out_dir", default="/scratch/project/dd-23-107/wenyan/data/foodie/results/mivqa_show_food_name")
     parser.add_argument("--show_food_name", action="store_true", default=False)
+    parser.add_argument("--use_web_img", action="store_true", default=False)
     parser.add_argument("--template", type=int, default=0)
     parser.add_argument("--lang", default="zh")
     args = parser.parse_args()
