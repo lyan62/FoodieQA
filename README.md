@@ -1,6 +1,6 @@
-# Foodie-eval
+# FoodieQA
 
-Evaluate LLMs/VLMs with the foodie benchmark
+Evaluate LLMs/VLMs with the FoodieQA benchmark
 
 
 ## Models
