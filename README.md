@@ -162,3 +162,12 @@ See `format_text_prompt()` in `model-eval/scripts/sivqa_utils.py`
 https://github.com/lyan62/foodie-eval/blob/76a22ee16fb58bb090c0ad3eb1f35e39fc71687e/model-eval/scripts/sivqa_utils.py#L30
 
 
+## Citation
+```
+@article{li2024foodieqa,
+  title={FoodieQA: A Multimodal Dataset for Fine-Grained Understanding of Chinese Food Culture},
+  author={Li, Wenyan and Zhang, Xinyu and Li, Jiaang and Peng, Qiwei and Tang, Raphael and Zhou, Li and Zhang, Weijia and Hu, Guimin and Yuan, Yifei and S{\o}gaard, Anders and others},
+  journal={arXiv preprint arXiv:2406.11030},
+  year={2024}
+}
+```
