@@ -1,4 +1,3 @@
-# Human: {question} Here are the options: {options} Assistant: If had to select one of the options, my answer would be (
 import json
 import os
 

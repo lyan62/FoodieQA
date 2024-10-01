@@ -3,8 +3,6 @@ import os
 from sklearn.metrics import accuracy_score
 import random
 
-# data_dir = "/scratch3/wenyan/data/foodie"
-# mivqa_file = "mivqa_filtered.json"
 
 def read_mivqa(data_dir, mivqa_file):
     # Read multi-image vqa data
