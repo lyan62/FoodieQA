@@ -246,10 +246,7 @@ def main(args):
 
     # read_data
     data_dir = args.data_dir
-    if args.lang == "zh":
-        eval_file = "mivqa_filtered.json"
-    else:
-        eval_file = "mivqa_filtered_bi.json"
+    eval_file = args.eval_file
     template = args.template
     out_dir = args.out_dir
     
@@ -280,6 +277,7 @@ if __name__ == "__main__":
     argparser.add_argument("--data_dir", default="/scratch/project/dd-23-107/wenyan/data/foodie")
     argparser.add_argument("--out_dir", default="/scratch/project/dd-23-107/wenyan/data/foodie/results/mivqa_res")
     argparser.add_argument("--model_name", default="microsoft/Phi-3-vision-128k-instruct") # "TIGER-Lab/Mantis-8B-Idefics2" "HuggingFaceM4/idefics2-8b"
+    argparser.add_argument("--eval_file", type=str, default="mivqa_tidy.jsonl")
     argparser.add_argument("--template", type=int, default=0)
     argparser.add_argument("--lang", type=str, default="zh")
     

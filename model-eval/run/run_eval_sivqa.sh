@@ -4,7 +4,7 @@
 #SBATCH --gres=gpu:3
 #SBATCH --time 8:00:00
 #SBATCH --job-name qwen
-#SBATCH --output /ceph/hpc/data/d2024d05-018-users/wenyan/data/foodie/logs/%x.%j.out
+#SBATCH --output data/foodie/logs/%x.%j.out
 
 
 cd $SLURM_SUBMIT_DIR # The path where this script was submitted from
@@ -19,25 +19,25 @@ echo $LD_LIBRARY_PATH
 echo $SLURMD_NODENAME $CUDA_VISIBLE_DEVICES
 nvidia-smi
 
-conda activate /ceph/hpc/home/euwenyanl/miniconda3/envs/foodie
 python -c "import torch; print(torch.__version__)"
 
 
-export HF_DATASETS_CACHE=/ceph/hpc/data/d2024d05-018-users/wenyan/cache
-export DATA_DIR=/ceph/hpc/data/d2024d05-018-users/wenyan/data
+export HF_DATASETS_CACHE=cache_path
+export DATA_DIR=data_path
 
 cd scripts
-# python eval_idefics_sivqa.py --template $1 \
-#     --model_name "HuggingFaceM4/idefics2-8b" \
-#     --cache_dir /ceph/hpc/data/d2024d05-018-users/wenyan/cache \
-#     --data_dir $DATA_DIR/foodie/ \
-#     --out_dir $DATA_DIR/foodie/results/sivqa_res \
-#     --lang zh \
-#     --eval_file sivqa_filtered_bi.json
-
-python eval_qwen_sivqa.py --template $1 \
-    --cache_dir /ceph/hpc/data/d2024d05-018-users/wenyan/cache \
+python eval_idefics_sivqa.py --template $1 \
+    --model_name "HuggingFaceM4/idefics2-8b" \
+    --cache_dir $HF_DATASETS_CACHE \
     --data_dir $DATA_DIR/foodie/ \
     --out_dir $DATA_DIR/foodie/results/sivqa_res \
     --lang zh \
-    --eval_file sivqa_filtered_bi.json
+    --eval_file sivqa_tiqy.json
+
+# python eval_mivqa_en.py --template $1 \
+#     --model_name "microsoft/Phi-3-vision-128k-instruct" \
+#     --cache_dir $HF_DATASETS_CACHE \
+#     --data_dir $DATA_DIR/foodie/ \
+#     --out_dir $DATA_DIR/foodie/results/mivqa_res \
+#     --lang zh \
+#     --eval_file mivqa_tiqy.json
