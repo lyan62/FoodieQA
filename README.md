@@ -84,8 +84,15 @@ License: [CC-BY-NC-ND 4.0](https://creativecommons.org/licenses/by-nc-nd/4.0/dee
      - template can be 0-3 to indicate which prompt to use
            
     similarly run Qwen-VL model with 
+
     ```
     python eval_qwen_sivqa.py --data_dir <data_folder> --out_dir <out_folder> --cache_dir <hf_cache_dir> --template 0 --eval_file sivqa_tidy.json
+    ```
+
+    evaluate Yi-models, `cd model-eval/Yi/VL`, then run
+    
+    ```
+    python foodie_inference.py --model_path models/Yi-VL-6B --data_dir <data_folder> --out_dir <out_folder> --cache_dir <hf_cache_dir> --template 0 --eval_file sivqa_tidy.json
     ```
 
 ### Prompts
