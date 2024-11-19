@@ -171,10 +171,22 @@ https://github.com/lyan62/foodie-eval/blob/76a22ee16fb58bb090c0ad3eb1f35e39fc716
 
 ## Citation
 ```
-@article{li2024foodieqa,
-  title={FoodieQA: A Multimodal Dataset for Fine-Grained Understanding of Chinese Food Culture},
-  author={Li, Wenyan and Zhang, Xinyu and Li, Jiaang and Peng, Qiwei and Tang, Raphael and Zhou, Li and Zhang, Weijia and Hu, Guimin and Yuan, Yifei and S{\o}gaard, Anders and others},
-  journal={arXiv preprint arXiv:2406.11030},
-  year={2024}
-}
+@inproceedings{li-etal-2024-foodieqa,
+    title = "{F}oodie{QA}: A Multimodal Dataset for Fine-Grained Understanding of {C}hinese Food Culture",
+    author = "Li, Wenyan  and
+      Zhang, Crystina  and
+      Li, Jiaang  and
+      Peng, Qiwei  and
+      Tang, Raphael  and
+      Zhou, Li  and
+      Zhang, Weijia  and
+      Hu, Guimin  and
+      Yuan, Yifei  and
+      S{\o}gaard, Anders  and
+      Hershcovich, Daniel  and
+      Elliott, Desmond",
+    booktitle = "Proceedings of the 2024 Conference on Empirical Methods in Natural Language Processing",
+    year = "2024",
+    url = "https://aclanthology.org/2024.emnlp-main.1063",
+    }
 ```
