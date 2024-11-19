@@ -1,4 +1,5 @@
 # FoodieQA
+Official repo for EMNLP 2024 paper [FoodieQA: A Multimodal Dataset for Fine-Grained Understanding of Chinese Food Culture](https://aclanthology.org/2024.emnlp-main.1063/)
 
 Evaluate Chinese food culture understanding of LLMs/VLMs with the FoodieQA benchmark
 
