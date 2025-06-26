@@ -3,6 +3,9 @@ Official repo for EMNLP 2024 paper [FoodieQA: A Multimodal Dataset for Fine-Grai
 
 Evaluate Chinese food culture understanding of LLMs/VLMs with the FoodieQA benchmark
 
+**FoodieQA is a benchmark including Multi-image, Single-image VQA, and textQA questions about regional Chinese food, built upon 389 unique food images of 350 unique food entries.** 
+The food images are collected from individual volunteers and not from the web to ensure evaluation fairness, specifically designed to evaluate the VLMs' capability on fine-grained understanding of Chinese food culture
+
 ## Benchmark
 
 ![](foodie-img.jpeg)
